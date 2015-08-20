@@ -1,0 +1,18 @@
+name,cereal_typology R(crop_sets),maximum_age I,minimum_age I,quantity D,rank I
+autumn_0_120_second,winter_straw_cereal,,,0.0,2
+autumn_0_120_third,winter_straw_cereal,,,0.0,3
+autumn_0_18_first,winter_straw_cereal,18,,10.0,1
+autumn_120_first,winter_straw_cereal,,120,70.0,1
+autumn_18_36_first,winter_straw_cereal,36,18,30.0,1
+autumn_36_60_first,winter_straw_cereal,60,36,50.0,1
+autumn_60_120_first,winter_straw_cereal,120,60,60.0,1
+spring_0_120_third,spring_straw_cereal,,,0.0,3
+spring_0_18_first,spring_straw_cereal,18,,20.0,1
+spring_0_36_second,spring_straw_cereal,36,,0.0,2
+spring_120_first,spring_straw_cereal,,120,140.0,1
+spring_120_second,spring_straw_cereal,,120,40.0,2
+spring_18_36_first,spring_straw_cereal,36,18,60.0,1
+spring_36_60_first,spring_straw_cereal,60,36,100.0,1
+spring_36_60_second,spring_straw_cereal,60,36,25.0,2
+spring_60_120_first,spring_straw_cereal,120,60,120.0,1
+spring_60_120_second,spring_straw_cereal,120,60,35.0,2

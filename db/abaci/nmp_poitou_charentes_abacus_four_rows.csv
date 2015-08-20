@@ -1,0 +1,4 @@
+name,absorbed_nitrogen D,maximum_leaf_count I,minimum_leaf_count I
+good_growth,50.0,,4
+little_growth,30.0,3,2
+no_growth,10.0,1,0

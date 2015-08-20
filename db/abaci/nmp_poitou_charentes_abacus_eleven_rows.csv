@@ -1,0 +1,15 @@
+name,growth_level R(plants_growth_levels),intermediate_crop_destruction_period_start,intermediate_crop_destruction_period_stop,intermediate_crop_variety R(crop_sets),mrci I
+crucifers_high,high,0101,1031,crucifers,20
+crucifers_low,low,0101,1031,crucifers,15
+grass_high,high,0101,1031,grass,20
+grass_low,low,0101,1031,grass,15
+late_crucifers_high,high,1101,1231,crucifers,15
+late_crucifers_low,low,1101,1231,crucifers,10
+late_grass_high,high,1101,1231,grass,15
+late_grass_low,low,1101,1231,grass,10
+late_leguminosae_low,low,1101,1231,leguminosae,25
+late_secale_phacelia_low,low,1101,1231,secale_phacelia,0
+leguminosae_high,high,0101,1231,leguminosae,30
+leguminosae_low,low,0101,1031,leguminosae,30
+secale_phacelia_high,high,0101,1231,secale_phacelia,10
+secale_phacelia_low,low,0101,1031,secale_phacelia,5
