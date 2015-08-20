@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
 require 'manuring/poitou_charentes_2013'
 
 module Manuring
@@ -13,7 +13,7 @@ module Manuring
       # puts cultivation_varieties.inspect.blue
       # puts soil_natures.inspect.white
       # FIXME: for production_usage
-      if items = Nomen::NmpFranceCultivationYield.where(cultivation_variety: cultivation_varieties, administrative_area: @options[:administrative_area] || :undefined) and items.any? # production_usage: @usage
+      if items = Manuring::Abaci::NmpFranceCultivationYield.where(cultivation_variety: cultivation_varieties, administrative_area: @options[:administrative_area] || :undefined) and items.any? # production_usage: @usage
         # puts items.inspect.green
         expected_yield = items.first.expected_yield.in_quintal_per_hectare
       end
@@ -133,7 +133,7 @@ module Manuring
       values[:nitrogen_input] = 0.in_kilogram_per_hectare
       # get sets corresponding to @variety
       sets = crop_sets.map(&:name).map(&:to_s)
-      # CEREALES A PAILLES : (((Pf + Rf) – (Ri + Mh + Mhp + Mr)) / CAU) - Xa = X
+      # CEREALES A PAILLES : (((Pf + Rf) - (Ri + Mh + Mhp + Mr)) / CAU) - Xa = X
       if @variety && (@variety <= :poaceae || @variety <= :brassicaceae || @variety <= :medicago || @variety <= :helianthus || @variety <= :nicotiana || @variety <= :linum)
         fertilizer_apparent_use_coeffient = 0.8.to_d
         values[:nitrogen_input] = (((values[:nitrogen_need] + values[:nitrogen_at_closing]) -
@@ -144,7 +144,7 @@ module Manuring
                                   values[:organic_fertilizer_mineral_fraction]
 
       end
-      # MAIS / TABAC / SORGHO : ((Pf + Rf) – (Ri + Mh + Mhp + Mr + MrCi + Nirr) - Xa ) / CAU = X
+      # MAIS / TABAC / SORGHO : ((Pf + Rf) - (Ri + Mh + Mhp + Mr + MrCi + Nirr) - Xa ) / CAU = X
       if @variety <= :zea || @variety <= :nicotiana || @variety <= :sorghum
         fertilizer_apparent_use_coeffient = 0.8.to_d
         values[:nitrogen_input] = (((values[:nitrogen_need] + values[:nitrogen_at_closing]) -
@@ -156,7 +156,7 @@ module Manuring
 
       end
 
-      # PRAIRIE : N exp – (Mh + N rest + FS) = Xa + (X * CAU)
+      # PRAIRIE : N exp - (Mh + N rest + FS) = Xa + (X * CAU)
 
       # NOYER : Xa + X = d * b
 
@@ -167,7 +167,7 @@ module Manuring
       # SOJA : pas d'apport sauf échec de nodulation
 
       # LEGUMES / ARBO / VIGNES : Dose plafond à partir d'abaques
-      # X ≤ nitrogen_input_max – Nirr – Xa
+      # X ≤ nitrogen_input_max - Nirr - Xa
       if @variety && (@variety <= :vitis || @variety <= :solanum_tuberosum || @variety <= :cucumis || sets.include?('gardening_vegetables'))
         values[:nitrogen_input] = values[:maximum_nitrogen_input] - values[:irrigation_water_nitrogen] - values[:organic_fertilizer_mineral_fraction]
       end
