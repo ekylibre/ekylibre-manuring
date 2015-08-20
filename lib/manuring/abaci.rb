@@ -3,7 +3,7 @@ module Manuring
 
     class << self
       def root
-        Pathname.new(__FILE__).dirname.dirname.dirname.join("db", "abaci")
+        Pathname.new(__FILE__).dirname.dirname.dirname.join("abaci")
       end
       
       def load_files
