@@ -5,7 +5,7 @@ module Manuring
       def root
         Pathname.new(__FILE__).dirname.dirname.dirname.join("abaci")
       end
-      
+
       def load_files
         Dir.glob(root.join("*.csv")) do |path|
           name = File.basename(path, ".csv")
