@@ -39,8 +39,9 @@ module Manuring
       if @variety
         items = Manuring::Abaci::NmpPoitouCharentesAbacusThreeRow.select do |i|
           @variety <= i.cultivation_variety &&
-            i.usage.to_sym == @usage &&
-            i.minimum_yield_aim <= expected_yield && expected_yield <= i.maximum_yield_aim &&
+            (i.usage.blank? || i.usage.to_sym == @usage) &&
+            (i.minimum_yield_aim.blank? || i.minimum_yield_aim <= expected_yield) &&
+            (i.maximum_yield_aim.blank? || expected_yield <= i.maximum_yield_aim) &&
             (i.irrigated.blank? || (@options[:irrigated] && i.irrigated) || (!@options[:irrigated] && !i.irrigated))
         end
         if items.any?
