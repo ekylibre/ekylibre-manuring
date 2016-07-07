@@ -4,18 +4,18 @@ namespace :lexicon do
 
   include Lexicon
   desc ""
-  task import_departements: :environment do
-    ENV["SHAPEFILE"]= Rails.root.join("tmp","departements","departements-20140306-5m.shp").to_s
-    ENV["FILENAME"]=File.join(Rails.root.join('plugins', 'manuring', "db","lexicon","departements.yml").to_s).to_s
+  task import_departments: :environment do
+    ENV["SHAPEFILE"]= Rails.root.join("tmp","departments","departements-20140306-5m.shp").to_s
+    ENV["FILENAME"]=File.join(Rails.root.join('plugins', 'manuring', "db","lexicon","departments.yml").to_s).to_s
     ENV["NAME_ATTR"]="code_insee"
-    ENV["NATURE"]="departement"
+    ENV["NATURE"]="Department"
     ENV["SRID"]="2154"
     ENV["PREFIX"]="FR-"
 
     url = 'http://osm13.openstreetmap.fr/~cquest/openfla/export/departements-20140306-5m-shp.zip'
-    unless File.exists?(Rails.root.join("tmp","departements","departements-20140306-5m.shp"))
+    unless File.exists?(Rails.root.join("tmp","departments","departements-20140306-5m.shp"))
       FileUtils.mkdir_p 'tmp/departements'
-      dir = Rails.root.join("tmp","departements")
+      dir = Rails.root.join("tmp","departments")
       open(url) do |file|
         Zip::File.open(file) do |zile|
           zile.each do |entry|
