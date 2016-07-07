@@ -1,0 +1,4 @@
+
+class VulnerableZone < RegulatoryZone
+
+end

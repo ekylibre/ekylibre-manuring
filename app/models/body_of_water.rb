@@ -1,0 +1,3 @@
+
+class BodyOfWater < RegulatoryZone
+end
