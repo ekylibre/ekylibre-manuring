@@ -18,6 +18,7 @@ class RegulatoryZone  < Ekylibre::Record::Base
      The Regulatory zones receive a buffer of n metters depending of there type. you can specify the buffer size with
      the option hash
 =end
+    ActiveRecord::Base.logger = nil
     non_spreadable_zone_shape = (ActiveRecord::Base.connection.execute "SELECT ST_AsEWKT(ST_Union(ST_Intersection(
 
                                                                   ST_Buffer(RZ.shape::geography, CASE RZ.type
@@ -32,11 +33,11 @@ class RegulatoryZone  < Ekylibre::Record::Base
                                                   ;", manure_management_plan.campaign.id).first.values.first
 
     non_spreadable_charta = Charta.new_geometry(non_spreadable_zone_shape)
-
     manure_management_plan.zones.each do |zone|
       zone_charta = Charta.new_geometry(zone.shape)
-      info[:areas][zone.id] =  zone_charta.other(non_spreadable_charta).area
+      info[:areas][zone.id] =  zone_charta.difference(non_spreadable_charta).area.in(Nomen::Unit.find(:hectare)).round(2)
     end
-    return { shape: res.first.values.first,info: info }
+
+    return [non_spreadable_charta,info]
   end
 end
