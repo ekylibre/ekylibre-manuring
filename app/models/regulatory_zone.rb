@@ -1,48 +1,42 @@
 
 class RegulatoryZone  < Ekylibre::Record::Base
 
-
-  def self.unify_shapes
-    ActiveRecord::Base.connection.execute "SELECT ST_Union(VZ.shape) FROM regulatory_zones as VZ
-                                          where VZ.type = 'VulnerableZone'"
-  end
-
-  def self.build_non_spreadable_zone
-
-    regulatory_zone_types = RegulatoryZone.pluck(:type)
-
-    #create a hash with
-    # key = type of regulary zone
-    # value = object Regulatory zone for this type
-    regulatory_zones = {}
-    regulatory_zone_types.each do |type|
-      regulatory_zones[type] = (Object.const_get type).all
-    end
+  def self.build_non_spreadable_zone(manure_management_plan,options={})
+    #Build the intersection between non spreadable zones and the zones from manure_management_plan
+    # return a hash {shape : <regulatory_zone>,
+    #                 info : {"areas" => {<id> => <spreadable_area> (int)(square meters) }}
+    #
+    # options are used to define the buffer size in square meters
+    options[:watercourse_buffer] ||= 25
+    options[:bodyofwater_buffer] ||= 25
+    options[:vulnerablezone_buffer] ||= 0
+    options[:default] ||= 0
+    info = {:areas => {}}
 
 =begin
-    ### Build the feature_collection
-    #build geometry_object for vulnerable_zones
-    shapes = []
-    regulatory_zones.each_value do |regulatory_zone|
-      regulatory_zone.map { |zone| shapes << zone.shape}
-    end
-
-    #mutlipolygone to describe regulatory zone
-
-    feature_collections = {}
-    regulatory_zone.each_with_index { |regulatory_zone, type |
-      features[type] = objects_to_feature(regulatory_zone)
-    }
- ##TO DO add the properties
-    regulatory_zones_feature_collection = features_to_feature_collection(features.values)
+     Compute the union of each Regulatory zone that intersects with an activity_production support_shape.
+     The Regulatory zones receive a buffer of n metters depending of there type. you can specify the buffer size with
+     the option hash
 =end
+    non_spreadable_zone_shape = (ActiveRecord::Base.connection.execute "SELECT ST_AsEWKT(ST_Union(ST_Intersection(
 
-    regulatory_zones_shape = RegulatoryZone.unify_shapes
+                                                                  ST_Buffer(RZ.shape::geography, CASE RZ.type
+                                                                                            WHEN 'Watercourse' THEN #{options[:watercourse_buffer]}
+                                                                                            WHEN 'BodyOfWater' THEN #{options[:bodyofwater_buffer]}
+                                                                                            WHEN 'VulnerableZone' THEN #{options[:vulnerablezone_buffer]}
+                                                                                            ELSE #{ options[:default]}
+                                                                                        END)::geometry, AP.support_shape)))
+                                                  FROM regulatory_zones as RZ
+                                                  JOIN activity_productions as AP on RZ.shape && AP.support_shape
+                                                   WHERE AP.campaign_id = 4
+                                                  ;", manure_management_plan.campaign.id).first.values.first
 
+    non_spreadable_charta = Charta.new_geometry(non_spreadable_zone_shape)
 
-    #res = {feature_collection: regulatory_zones_feature_collection, union_shape: regulatory_zones_shape}
-    byebug
-
+    manure_management_plan.zones.each do |zone|
+      zone_charta = Charta.new_geometry(zone.shape)
+      info[:areas][zone.id] =  zone_charta.other(non_spreadable_charta).area
+    end
+    return { shape: res.first.values.first,info: info }
   end
-
 end
