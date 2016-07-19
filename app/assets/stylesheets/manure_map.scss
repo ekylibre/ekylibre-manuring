@@ -1,0 +1,9 @@
+#core {
+  .form-map {
+    height: 100%;
+    .manure-map {
+      @include float(left);
+      height: 70%;
+    }
+  }
+}
