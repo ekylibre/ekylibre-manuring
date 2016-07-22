@@ -1,11 +1,12 @@
 author "Brice Texier <brice@ekylibre.com>"
 
-add_theme_stylesheet "*", "manure_management_plan_map"
-
+add_theme_stylesheet "*", "manure_map"
 
 name "manuring"
 version "0.0.0"
 app '>= 1.1.0', '< 2.0.0'
 
-register_manure_management_method :aquitaine_2013, 'Manuring::Aquitaine2013'
-register_manure_management_method :poitou_charentes_2013, 'Manuring::PoitouCharentes2013'
+#register_manure_management_method :aquitaine_2013, 'Manuring::Aquitaine2013'
+#register_manure_management_method :poitou_charentes_2013, 'Manuring::PoitouCharentes2013'
+
+require_javascript "manure_management"

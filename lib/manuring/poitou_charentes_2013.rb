@@ -1,3 +1,4 @@
+=begin
 # coding: utf-8
 require 'calculus/manure_management_plan/method'
 require 'calculus/manure_management_plan/external'
@@ -503,3 +504,4 @@ module Manuring
     end
   end
 end
+=end

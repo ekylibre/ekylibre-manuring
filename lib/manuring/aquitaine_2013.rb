@@ -1,3 +1,4 @@
+=begin
 # coding: utf-8
 require 'manuring/poitou_charentes_2013'
 
@@ -176,3 +177,4 @@ module Manuring
     end
   end
 end
+=end
