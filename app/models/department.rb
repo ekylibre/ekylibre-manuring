@@ -1,4 +1,0 @@
-
-class Department < AdministrativeArea
-
-end

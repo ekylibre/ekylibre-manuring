@@ -1,3 +1,0 @@
-
-class Watercourse < RegulatoryZone
-end
