@@ -1,9 +1,15 @@
 #core {
-  .form-map {
+  .manure_edit{
     height: 100%;
-    .manure-map {
-      @include float(left);
-      height: 70%;
+    #face-map {
+      height: 100%;
+      .form-map {
+        height: 100%;
+        .manure-map {
+          @include float(left);
+          height: 70%;
+        }
+      }
     }
   }
 }
