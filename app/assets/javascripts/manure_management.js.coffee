@@ -1,9 +1,15 @@
 ((E, $) ->
   'use strict'
 
+
+
+
+
+
   $(document).ready ->
 
     $el = $('input.manuring_step_form[data-map-editor]')
+
 
     updateMap = () ->
       if $el.is(':ui-mapeditor')
@@ -108,7 +114,6 @@
           $('#delete-shape').modal('hide')
 
       $('#delete-shape').modal('show')
-
 
   return false
 
