@@ -3,8 +3,6 @@
     height: 100%;
     #face-map {
       height: 100%;
-      .form-map {
-        height: 100%;
         .manure-map {
           @include float(left);
           height: 70%;
@@ -12,4 +10,3 @@
       }
     }
   }
-}

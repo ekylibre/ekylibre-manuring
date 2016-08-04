@@ -1,15 +1,22 @@
 ((E, $) ->
   'use strict'
 
-
-
-
-
-
   $(document).ready ->
 
     $el = $('input.manuring_step_form[data-map-editor]')
 
+    updateQuestion = (shape) ->
+      if $el.is(':ui-mapeditor')
+        data = shape: JSON.stringify shape
+        if shape
+          $.ajax
+            url: $el.data('update-question')
+            method: 'POST'
+            data: data
+            error: (request, status, error) ->
+              false
+            success: (status) ->
+              true
 
     updateMap = () ->
       if $el.is(':ui-mapeditor')
@@ -51,7 +58,6 @@
           data =
             shape: JSON.stringify shape
             attributes: $el.data('attributes')
-          console.log(shape)
 
           $.ajax
             url: $el.data('delete-url')
@@ -76,6 +82,10 @@
 
     $el.on 'mapchange', =>
       updateMap()
+
+    $el.on 'modal_validated', (e, shape) ->
+      updateQuestion(shape)
+
 
     $el.on 'mapeditor:feature_add', (e, shape) ->
       InsertToMap(shape)
