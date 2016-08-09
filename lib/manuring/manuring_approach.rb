@@ -2,7 +2,8 @@ module Manuring
 
     class ManuringApproach < Calculus::ManureManagementPlan::Approach
       
-      def initialize
+      def initialize(application)
+        super(application)
         @variety = manure_management_plan_zone.cultivation_variety
         @administrative_area = manure_management_plan_zone.administrative_area
       end
