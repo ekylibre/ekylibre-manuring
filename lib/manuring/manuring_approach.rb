@@ -1,19 +1,19 @@
 module Manuring
 
     class ManuringApproach < Calculus::ManureManagementPlan::Approach
-      
+
       def initialize(application)
         super(application)
         @variety = manure_management_plan_zone.cultivation_variety
         @administrative_area = manure_management_plan_zone.administrative_area
       end
-      
+
       # Estimate "y"
       def estimate_expected_yield
         require 'colored' unless defined? Colored
         expected_yield = budget_estimate_expected_yield
         puts expected_yield.inspect.red
-        
+
         cultivation_varieties = (@variety ? @variety.self_and_parents : :undefined)
         # puts "------------------------------------------------------".red
         # puts @options.inspect.yellow
@@ -37,7 +37,7 @@ module Manuring
         # puts "======================================================".red
         expected_yield
       end
-      
+
     end
 
 end

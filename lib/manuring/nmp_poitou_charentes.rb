@@ -2,7 +2,8 @@ module Manuring
 
     class NmpPoitouCharentes < ManuringApproach
 
-        def compute_needs
+        def estimated_needs
+            return {toto: 10, tata: 11, titi: 12}
             yields = estimate_expected_yield
         end
 
