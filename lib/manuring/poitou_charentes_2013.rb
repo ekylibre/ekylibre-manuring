@@ -1,41 +1,15 @@
-=begin
 # coding: utf-8
-require 'calculus/manure_management_plan/method'
-require 'calculus/manure_management_plan/external'
+# require 'calculus/manure_management_plan/method'
+# require 'calculus/manure_management_plan/external'
 
 module Manuring
-  class PoitouCharentes2013 < Calculus::ManureManagementPlan::Method
-    # Estimate "y"
-    def estimate_expected_yield
-      require 'colored' unless defined? Colored
-      expected_yield = Calculus::ManureManagementPlan::External.new(@options).estimate_expected_yield
-      cultivation_varieties = (@variety ? @variety.self_and_parents : :undefined)
-      # puts "------------------------------------------------------".red
-      # puts @options.inspect.yellow
-      # puts cultivation_varieties.inspect.blue
-      # puts soil_natures.inspect.white
-      if items = Manuring::Abaci::NmpFranceCultivationYield.where(cultivation_variety: cultivation_varieties, administrative_area: @options[:administrative_area] || :undefined) and items.any? and (@variety <= :avena || @variety <= :secale)
-        # puts items.inspect.green
-        expected_yield = items.first.expected_yield.in_quintal_per_hectare
-      elsif capacity = @options[:available_water_capacity].in_liter_per_square_meter and items = Manuring::Abaci::NmpPoitouCharentesAbacusTwoRow.where(cultivation_variety: cultivation_varieties, soil_nature: soil_natures) and items = items.select { |i| i.minimum_available_water_capacity.in_liter_per_square_meter <= capacity && capacity < i.maximum_available_water_capacity.in_liter_per_square_meter } and items.any?
-        # puts items.inspect.green
-        expected_yield = items.first.expected_yield.in_quintal_per_hectare
-      else
-        variety = nil
-        if @support.usage == 'grain'
-          variety = :grain
-        elsif @support.usage == 'fodder'
-          variety = :grass
-        end
-        expected_yield = @support.estimate_yield(variety: variety)
-      end
-      # puts "======================================================".red
-      expected_yield
-    end
-
-    # Estimate "Pf"
-    def estimate_nitrogen_need
-      expected_yield = @expected_yield.to_f(:quintal_per_hectare)
+  class PoitouCharentes2013 < ManuringApproach
+    
+    def estimated_needs(expected_yield = nil)
+      
+      # Estimate "Pf"
+      expected_yield = estimate_expected_yield if expected_yield.nil?
+      
       b = 3
       if @variety
         items = Manuring::Abaci::NmpPoitouCharentesAbacusThreeRow.select do |i|
@@ -43,7 +17,7 @@ module Manuring
             (i.usage.blank? || i.usage.to_sym == @usage) &&
             (i.minimum_yield_aim.blank? || i.minimum_yield_aim <= expected_yield) &&
             (i.maximum_yield_aim.blank? || expected_yield <= i.maximum_yield_aim) &&
-            (i.irrigated.blank? || (@options[:irrigated] && i.irrigated) || (!@options[:irrigated] && !i.irrigated))
+            (i.irrigated.blank? || (@irrigated && i.irrigated) || (!@irrigated && !i.irrigated))
         end
         if items.any?
           b = items.first.coefficient
@@ -55,7 +29,137 @@ module Manuring
       #   b = items.first.coefficient
       # end
       @expected_yield.in_kilogram_per_hectare * b / 100.0.to_d
+      
     end
+    
+    # compute all supply parameters
+    def estimated_supply
+      values = {}
+
+      # Pi
+      values[:absorbed_nitrogen_at_opening] = estimate_absorbed_nitrogen_at_opening
+
+      # Ri
+      values[:mineral_nitrogen_at_opening]  = estimate_mineral_nitrogen_at_opening
+
+      # Mh
+      values[:humus_mineralization]           = estimate_humus_mineralization
+
+      # Mhp
+      values[:meadow_humus_mineralization]    = estimate_meadow_humus_mineralization
+
+      # Mr
+      values[:previous_cultivation_residue_mineralization] = estimate_previous_cultivation_residue_mineralization
+
+      # Mrci
+      values[:intermediate_cultivation_residue_mineralization] = estimate_intermediate_cultivation_residue_mineralization
+
+      # Nirr
+      values[:irrigation_water_nitrogen] = estimate_irrigation_water_nitrogen
+
+      # Xa
+      values[:organic_fertilizer_mineral_fraction] = estimate_organic_fertilizer_mineral_fraction
+
+      # Rf
+      values[:nitrogen_at_closing] = estimate_nitrogen_at_closing
+
+      # Po
+      values[:soil_production] = estimate_soil_production
+
+      # Xmax
+      values[:maximum_nitrogen_input] = estimate_maximum_nitrogen_input
+      
+      return values
+    end
+
+    def estimated_input(values = {})
+      
+      # X
+      input = 0.in_kilogram_per_hectare
+
+      sets = crop_sets.map(&:name).map(&:to_s)
+
+      if @variety && (@variety <= :poaceae || @variety <= :brassicaceae || @variety <= :medicago || @variety <= :helianthus || @variety <= :nicotiana || @variety <= :linum)
+        if @soil_nature.include?(Nomen::SoilNature[:clay_limestone_soil]) || soil_natures.include?(Nomen::SoilNature[:chesnut_red_soil]) and @variety and @variety > :nicotiana
+          # CAU = 0.8
+          # X = [(Pf - Po - Mr - MrCi - Nirr) / CAU] - Xa
+          fertilizer_apparent_use_coeffient = 0.8.to_d
+          input = (((values[:nitrogen_need] -
+                                       values[:soil_production] -
+                                       values[:previous_cultivation_residue_mineralization] -
+                                       values[:intermediate_cultivation_residue_mineralization] -
+                                       values[:irrigation_water_nitrogen]) / fertilizer_apparent_use_coeffient) -
+                                     values[:organic_fertilizer_mineral_fraction])
+        else
+          # X = Pf - Pi - Ri - Mh - Mhp - Mr - MrCi - Nirr - Xa + Rf
+          input = (values[:nitrogen_need] -
+                                     values[:absorbed_nitrogen_at_opening] -
+                                     values[:mineral_nitrogen_at_opening] -
+                                     values[:humus_mineralization] -
+                                     values[:meadow_humus_mineralization] -
+                                     values[:previous_cultivation_residue_mineralization] -
+                                     values[:intermediate_cultivation_residue_mineralization] -
+                                     values[:irrigation_water_nitrogen] -
+                                     values[:organic_fertilizer_mineral_fraction] +
+                                     values[:nitrogen_at_closing])
+        end
+
+        if @soil_nature.include?(Nomen::SoilNature[:clay_limestone_soil])
+          input *= 1.15.to_d
+        else
+          input *= 1.10.to_d
+        end
+      end
+
+      # LEGUMES / ARBO / VIGNES : Dose plafond à partir d'abaques
+      # X ≤ nitrogen_input_max – Nirr – Xa
+      if @variety && (@variety <= :vitis || @variety <= :solanum_tuberosum || @variety <= :cucumis || sets.include?('gardening_vegetables'))
+        input = values[:maximum_nitrogen_input] - values[:irrigation_water_nitrogen] - values[:organic_fertilizer_mineral_fraction]
+      end
+      # @zone.mark(:nitrogen_area_density, nitrogen_input.round(3), subject: :support)
+
+      # if input < 0 then 0
+      if input.to_d < 0.0
+        input = 0.in_kilogram_per_hectare
+      end
+
+      # if input > MAX then MAX
+      if input.to_d > values[:maximum_nitrogen_input].to_d
+        input = values[:maximum_nitrogen_input]
+      end
+
+      values
+    end
+    
+    
+    # Estimate "y"
+    def estimate_expected_yield
+      cultivation_varieties = (@variety ? @variety.self_and_parents : :undefined)
+      # puts "------------------------------------------------------".red
+      # puts @options.inspect.yellow
+      # puts cultivation_varieties.inspect.blue
+      # puts soil_natures.inspect.white
+      if items = Manuring::Abaci::NmpFranceCultivationYield.where(cultivation_variety: cultivation_varieties, administrative_area: @administrative_area || :undefined) and items.any? and (@variety <= :avena || @variety <= :secale)
+        # puts items.inspect.green
+        expected_yield = items.first.expected_yield.in_quintal_per_hectare
+      elsif capacity = @available_water_capacity.in_liter_per_square_meter and items = Manuring::Abaci::NmpPoitouCharentesAbacusTwoRow.where(cultivation_variety: cultivation_varieties, soil_nature: @soil_nature) and items = items.select { |i| i.minimum_available_water_capacity.in_liter_per_square_meter <= capacity && capacity < i.maximum_available_water_capacity.in_liter_per_square_meter } and items.any?
+        # puts items.inspect.green
+        expected_yield = items.first.expected_yield.in_quintal_per_hectare
+      else
+        variety = nil
+        if @activity_production.usage == 'grain'
+          variety = :grain
+        elsif @activity_production.usage == 'fodder'
+          variety = :grass
+        end
+        # return budget estimate yield
+        expected_yield = @activity_production.estimate_yield(variety: variety)
+      end
+      # puts "======================================================".red
+      expected_yield
+    end
+
+    
 
     # Estimate "Pi"
     def estimate_absorbed_nitrogen_at_opening
@@ -84,8 +188,7 @@ module Manuring
 
     # Estimate "Ri"
     def estimate_mineral_nitrogen_at_opening
-      @options[:mineral_nitrogen_at_opening] ||= 0.0
-      quantity = @options[:mineral_nitrogen_at_opening].in_kilogram_per_hectare
+      quantity = @mineral_nitrogen_at_opening.in_kilogram_per_hectare
       quantity ||= 15.in_kilogram_per_hectare
       if quantity < 5.in_kilogram_per_hectare
         quantity = 5.in_kilogram_per_hectare
@@ -132,8 +235,8 @@ module Manuring
       rank = 1
       found = nil
       for campaign in self.campaign.previous.reorder(harvest_year: :desc)
-        for support in campaign.production_supports.where(storage_id: @support.storage.id)
-          variety_support = Nomen::Variety.find(support.production.variant_variety)
+        for support in campaign.activity_productions.where(cultivable_zone_id: @activity_production.cultivable_zone.id)
+          variety_support = Nomen::Variety.find(support.production_variety)
           if variety_support <= :poa
             found = support
             break
@@ -160,7 +263,7 @@ module Manuring
       # get the previous cultivation variety on the current support storage
       previous_variety = nil
       for campaign in self.campaign.previous.reorder(harvest_year: :desc)
-        for support in campaign.production_supports.where(storage_id: @support.storage.id)
+        for support in campaign.activity_productions.where(cultivable_zone_id: @activity_production.cultivable_zone.id)
           # if an implantation intervention exist, get the plant output
           if previous_implantation_intervention = support.interventions.of_nature(:implantation).where(state: :done).order(:started_at).last
             if previous_cultivation = previous_implantation_intervention.casts.of_generic_role(:output).first.actor
@@ -170,8 +273,8 @@ module Manuring
             end
             break if previous_variety
           # elsif get the production_variant
-          elsif support.production_variant
-            previous_variety = Nomen::Variety.find(support.production_variant.variety)
+          elsif support.variety
+            previous_variety = Nomen::Variety.find(support.variety)
             break
           end
           break if previous_variety
@@ -222,10 +325,10 @@ module Manuring
       quantity = 0.in_kilogram_per_hectare
       sets = crop_sets.map(&:name).map(&:to_s)
       if sets.any? && sets.include?('spring_crop')
-        if @support.storage
+        if @activity_production.support
           previous_variety = nil
           for campaign in self.campaign.previous.reorder(harvest_year: :desc)
-            for support in campaign.production_supports.where(storage_id: @support.storage.id)
+            for support in campaign.activity_productions.where(cultivable_zone_id: @activity_production.cultivable_zone.id)
               # if an implantation intervention exist, get the plant output
               if previous_implantation_intervention = support.interventions.of_nature(:implantation).where(state: :done).order(:started_at).last
                 if previous_cultivation = previous_implantation_intervention.casts.of_generic_role(:output).actor
@@ -235,8 +338,8 @@ module Manuring
                 end
                 break if previous_variety
               # elsif get the production_variant
-              elsif support.production_variant
-                previous_variety = Nomen::Variety.find(support.production_variant.variety)
+              elsif support.variety
+                previous_variety = Nomen::Variety.find(support.variety)
                 break
               end
               break if previous_variety
@@ -278,9 +381,10 @@ module Manuring
     # Estimate Nirr
     def estimate_irrigation_water_nitrogen
       quantity = 0.in_kilogram_per_hectare
-      if @support.production.irrigated?
-        water_budget_items = ProductionBudget.where(production: @support.production, variant_id: ProductNatureVariant.of_variety(:water).map(&:id))
-        s = Measure.new(1.00, @support.quantity_unit)
+      if @irrigated
+        budget_ids = ActivityBudget.where(activity_id: @activity_production.activity_id, campaign_id: @activity_production.campaign_id).pluck(:id)
+        water_budget_items = ActivityBudgetItem.where(activity_budget_id: budget_ids, variant_id: ProductNatureVariant.of_variety(:water).map(&:id))
+        s = @activity_production.size
         v = 0
         for item in water_budget_items
           m = Measure.new(item.quantity, item.variant_unit)
@@ -305,7 +409,7 @@ module Manuring
       started_at = Time.new(campaign.harvest_year - 1, 7, 15)
       stopped_at = @opened_at
       global_xa = []
-      if interventions = @support.interventions.real.where(state: 'done').of_nature(:soil_enrichment).between(started_at, stopped_at).with_cast('soil_enrichment-target', @support.storage)
+      if interventions = @activity_production.interventions.real.where(state: 'done').of_nature(:soil_enrichment).between(started_at, stopped_at)
         for intervention in interventions
           # get the working area (hectare)
           working_area = intervention.casts.of_role('soil_enrichment-target').first.population
@@ -347,7 +451,7 @@ module Manuring
       if @variety && @variety <= :nicotiana
         quantity = 50.in_kilogram_per_hectare
       end
-      if @soil_nature && capacity = @options[:available_water_capacity].in_liter_per_square_meter
+      if @soil_nature && capacity = @available_water_capacity.in_liter_per_square_meter
         items = Manuring::Abaci::NmpPoitouCharentesAbacusNineRow.select do |item|
           @soil_nature <= item.soil_nature && item.minimum_available_water_capacity.in_liter_per_square_meter <= capacity && capacity < item.maximum_available_water_capacity.in_liter_per_square_meter
         end
@@ -363,7 +467,7 @@ module Manuring
       # TODO: find a way to retrieve water falls
       water_falls = 380.in_liter_per_square_meter
 
-      if capacity = @options[:available_water_capacity].in_liter_per_square_meter and sets = crop_sets.map(&:name).map(&:to_s)
+      if capacity = @available_water_capacity.in_liter_per_square_meter and sets = crop_sets.map(&:name).map(&:to_s)
         if @variety && @variety <= :brassica_napus && plant_growth_indicator = @cultivation.density(:fresh_mass, :net_surface_area).to_d(:kilogram_per_hectare)
 
           if plant_growth_indicator <= 0.4
@@ -395,7 +499,7 @@ module Manuring
 
     def estimate_maximum_nitrogen_input
       quantity = 170.in_kilogram_per_hectare
-      if department_item = @options[:administrative_area] and @variety
+      if department_item = @administrative_area and @variety
         cultivation_varieties = @variety.self_and_parents
         items = Manuring::Abaci::NmpFranceCultivationNitrogenInputMaxima.select do |i|
           @variety <= i.cultivation_variety && i.administrative_area.to_s == department_item.parent_area.to_s
@@ -407,101 +511,5 @@ module Manuring
       quantity
     end
 
-    def compute
-      values = {}
-
-      # Pf
-      values[:nitrogen_need]                  = estimate_nitrogen_need
-
-      # Pi
-      values[:absorbed_nitrogen_at_opening] = estimate_absorbed_nitrogen_at_opening
-
-      # Ri
-      values[:mineral_nitrogen_at_opening]  = estimate_mineral_nitrogen_at_opening
-
-      # Mh
-      values[:humus_mineralization]           = estimate_humus_mineralization
-
-      # Mhp
-      values[:meadow_humus_mineralization]    = estimate_meadow_humus_mineralization
-
-      # Mr
-      values[:previous_cultivation_residue_mineralization] = estimate_previous_cultivation_residue_mineralization
-
-      # Mrci
-      values[:intermediate_cultivation_residue_mineralization] = estimate_intermediate_cultivation_residue_mineralization
-
-      # Nirr
-      values[:irrigation_water_nitrogen] = estimate_irrigation_water_nitrogen
-
-      # Xa
-      values[:organic_fertilizer_mineral_fraction] = estimate_organic_fertilizer_mineral_fraction
-
-      # Rf
-      values[:nitrogen_at_closing] = estimate_nitrogen_at_closing
-
-      # Po
-      values[:soil_production] = estimate_soil_production
-
-      # Xmax
-      values[:maximum_nitrogen_input] = estimate_maximum_nitrogen_input
-
-      # X
-      values[:nitrogen_input] = 0.in_kilogram_per_hectare
-
-      sets = crop_sets.map(&:name).map(&:to_s)
-
-      if @variety && (@variety <= :poaceae || @variety <= :brassicaceae || @variety <= :medicago || @variety <= :helianthus || @variety <= :nicotiana || @variety <= :linum)
-        if soil_natures.include?(Nomen::SoilNature[:clay_limestone_soil]) || soil_natures.include?(Nomen::SoilNature[:chesnut_red_soil]) and @variety and @variety > :nicotiana
-          # CAU = 0.8
-          # X = [(Pf - Po - Mr - MrCi - Nirr) / CAU] - Xa
-          fertilizer_apparent_use_coeffient = 0.8.to_d
-          values[:nitrogen_input] = (((values[:nitrogen_need] -
-                                       values[:soil_production] -
-                                       values[:previous_cultivation_residue_mineralization] -
-                                       values[:intermediate_cultivation_residue_mineralization] -
-                                       values[:irrigation_water_nitrogen]) / fertilizer_apparent_use_coeffient) -
-                                     values[:organic_fertilizer_mineral_fraction])
-        else
-          # X = Pf - Pi - Ri - Mh - Mhp - Mr - MrCi - Nirr - Xa + Rf
-          values[:nitrogen_input] = (values[:nitrogen_need] -
-                                     values[:absorbed_nitrogen_at_opening] -
-                                     values[:mineral_nitrogen_at_opening] -
-                                     values[:humus_mineralization] -
-                                     values[:meadow_humus_mineralization] -
-                                     values[:previous_cultivation_residue_mineralization] -
-                                     values[:intermediate_cultivation_residue_mineralization] -
-                                     values[:irrigation_water_nitrogen] -
-                                     values[:organic_fertilizer_mineral_fraction] +
-                                     values[:nitrogen_at_closing])
-        end
-
-        if soil_natures.include?(Nomen::SoilNature[:clay_limestone_soil])
-          values[:nitrogen_input] *= 1.15.to_d
-        else
-          values[:nitrogen_input] *= 1.10.to_d
-        end
-      end
-
-      # LEGUMES / ARBO / VIGNES : Dose plafond à partir d'abaques
-      # X ≤ nitrogen_input_max – Nirr – Xa
-      if @variety && (@variety <= :vitis || @variety <= :solanum_tuberosum || @variety <= :cucumis || sets.include?('gardening_vegetables'))
-        values[:nitrogen_input] = values[:maximum_nitrogen_input] - values[:irrigation_water_nitrogen] - values[:organic_fertilizer_mineral_fraction]
-      end
-      # @zone.mark(:nitrogen_area_density, nitrogen_input.round(3), subject: :support)
-
-      # if values[:nitrogen_input] < 0 then 0
-      if values[:nitrogen_input].to_d < 0.0
-        values[:nitrogen_input] = 0.in_kilogram_per_hectare
-      end
-
-      # if values[:nitrogen_input] > MAX then MAX
-      if values[:nitrogen_input].to_d > values[:maximum_nitrogen_input].to_d
-        values[:nitrogen_input] = values[:maximum_nitrogen_input]
-      end
-
-      values
-    end
   end
 end
-=end
