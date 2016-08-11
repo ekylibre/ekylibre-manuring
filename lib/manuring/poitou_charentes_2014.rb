@@ -3,16 +3,18 @@
 # require 'calculus/manure_management_plan/external'
 
 module Manuring
-  class PoitouCharentes2013 < ManuringApproach
+  class PoitouCharentes2014 < ManuringApproach
+    
+    # http://www.poitou-charentes.developpement-durable.gouv.fr
+    # Arrété 149/SGAR/2014 du 23/05/2014
     
     def estimated_needs(expected_yield = nil)
       
       # Estimate "Pf"
       expected_yield = estimate_expected_yield if expected_yield.nil?
       
-      b = 3
       if @variety
-        items = Manuring::Abaci::NmpPoitouCharentesAbacusThreeRow.select do |i|
+        items = Manuring::Abaci::NmpPoitouCharentesAbacusThree2014Row.select do |i|
           @variety <= i.cultivation_variety &&
             (i.usage.blank? || i.usage.to_sym == @usage) &&
             (i.minimum_yield_aim.blank? || i.minimum_yield_aim <= expected_yield) &&
@@ -21,15 +23,20 @@ module Manuring
         end
         if items.any?
           b = items.first.coefficient
+        elsif @variety <= :triticum_aestivum
+          b ||= 3
+        elsif @variety <= :triticum_durum
+          b ||= 3.5
         elsif @variety <= :zea
-          b = 2.4
+          b ||= 2.4
+        else
+          b = 0
         end
       end
       # if @variety and items = Manuring::Abaci::NmpPoitouCharentesAbacusThreeRow.best_match(:cultivation_variety, @variety.name) and items.any?
       #   b = items.first.coefficient
       # end
       expected_yield.in_kilogram_per_hectare * b / 100.0.to_d
-      
     end
     
     # compute all supply parameters
@@ -138,18 +145,19 @@ module Manuring
     
     # Estimate "y"
     def estimate_expected_yield
-      puts 'PC 2013 ESTIMATE YIELD'.inspect.red
       cultivation_varieties = (@variety ? @variety.self_and_parents : :undefined)
-      # puts "------------------------------------------------------".red
-      # puts @options.inspect.yellow
-      # puts cultivation_varieties.inspect.blue
-      # puts soil_natures.inspect.white
-      if items = Manuring::Abaci::NmpFranceCultivationYield.where(cultivation_variety: cultivation_varieties, administrative_area: @administrative_area || :undefined) and items.any? and (@variety <= :avena || @variety <= :secale)
+      # TODO
+      # 1 / Calcul des références disponibles sur l'exploitation (au moins de cinq valeurs pour une condition de sol et de culture)
+      # Moyenne des interventions de récolte sur les 5 dernières années
+      
+      # 2 / Référence par type de sol (Céréales)
+      if capacity = @available_water_capacity.in_liter_per_square_meter and items = Manuring::Abaci::NmpPoitouCharentesAbacusTwoRow.where(cultivation_variety: cultivation_varieties, soil_nature: @soil_nature) and items = items.select { |i| i.minimum_available_water_capacity.in_liter_per_square_meter <= capacity && capacity < i.maximum_available_water_capacity.in_liter_per_square_meter } and items.any?
         # puts items.inspect.green
         expected_yield = items.first.expected_yield.in_quintal_per_hectare
-      elsif capacity = @available_water_capacity.in_liter_per_square_meter and items = Manuring::Abaci::NmpPoitouCharentesAbacusTwoRow.where(cultivation_variety: cultivation_varieties, soil_nature: @soil_nature) and items = items.select { |i| i.minimum_available_water_capacity.in_liter_per_square_meter <= capacity && capacity < i.maximum_available_water_capacity.in_liter_per_square_meter } and items.any?
-        # puts items.inspect.green
+      # 3 / Référence par département (Avoine, Seigle et Mélange de céréales)
+      elsif items = Manuring::Abaci::NmpFranceCultivationYield.where(cultivation_variety: cultivation_varieties, administrative_area: @administrative_area || :undefined) and items.any? and (@variety <= :avena || @variety <= :secale)
         expected_yield = items.first.expected_yield.in_quintal_per_hectare
+      # 4 / Si aucuns des cas, receuil de la valeur saisie dans le budget
       else
         variety = nil
         if @activity_production.usage == 'grain'
@@ -163,7 +171,7 @@ module Manuring
         expected_yield = @activity_production.estimate_yield(options)
       end
       # puts "======================================================".red
-      expected_yield
+      return expected_yield
     end
 
     
@@ -175,8 +183,8 @@ module Manuring
         quantity = 0.in_kilogram_per_hectare
       elsif @cultivation
         if count = @cultivation.leaf_count(at: @opened_at) and activity.nature.to_sym == :cereal_crops
-          items = Manuring::Abaci::NmpPoitouCharentesAbacusFourRow.select do |item|
-            item.minimum_leaf_count <= count && count <= item.minimum_leaf_count
+          items = Manuring::Abaci::NmpPoitouCharentesAbacusFour2014Row.select do |item|
+            item.minimum_leaf_count <= count && count <= item.maximum_leaf_count
           end
           if items.any?
             quantity = items.first.absorbed_nitrogen.in_kilogram_per_hectare
@@ -195,7 +203,9 @@ module Manuring
 
     # Estimate "Ri"
     def estimate_mineral_nitrogen_at_opening
-      quantity = @mineral_nitrogen_at_opening.in_kilogram_per_hectare
+      # Question
+      quantity = parameters[:mineral_nitrogen_in_soil_at_opening]
+      quantity ||= @mineral_nitrogen_at_opening.in_kilogram_per_hectare
       quantity ||= 15.in_kilogram_per_hectare
       if quantity < 5.in_kilogram_per_hectare
         quantity = 5.in_kilogram_per_hectare

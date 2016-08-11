@@ -1,0 +1,10 @@
+name,absorbed_nitrogen D,maximum_leaf_count I,minimum_leaf_count I
+growth_01,10.0,0,0
+growth_02,15.0,1,0
+growth_03,20.0,2,1
+growth_04,25.0,3,2
+growth_05,30.0,4,3
+growth_06,35.0,5,4
+growth_07,40.0,6,5
+growth_08,45.0,7,6
+growth_09,50.0,50,7
