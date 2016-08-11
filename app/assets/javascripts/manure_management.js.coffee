@@ -35,7 +35,7 @@
             success: (status) ->
               true
 
-    InsertToMap = (shape) ->
+    saveGeoreading = (shape) ->
       if $el.is(':ui-mapeditor')
         newShapes = shape
         data =
@@ -68,6 +68,21 @@
             success: (data) ->
               true
 
+    allQuestionsFilled? = (shape)
+      Object.keys(feature.properties.modalAttributes.group).forEach (key, index) =>
+        question_group = feature.properties.modalAttributes.group[key]
+        Object.keys(properties_group).forEach (key, index) =>
+          question = question_group[key]
+          if !(question.value && question.value.length > 0)
+            return false
+      return true
+
+
+    updateActionMenu = (shape) ->
+      if allQuestionsFilled?(shape)
+        
+
+
     $el.on 'mapeditor:loaded', ->
 
       cap_geojson = $el.data('cap-geojson')
@@ -85,11 +100,18 @@
 
     $el.on 'modal_validated', (e, shape) ->
       updateQuestion(shape)
+      updateActionMenu(shape)
+      console.log(shape)
+
+    $el.on 'mapeditor:serie_feature_add', (e, shape) ->
+      if shape.properties.actionMenu
+        $el.mapeditoractionmenu 'insert', shape
+
+    $el.on ' mapeditor:edit_feature_add', (e, shape) ->
+      saveGeoreading(shape)
 
 
-    $el.on 'mapeditor:feature_add', (e, shape) ->
-      InsertToMap(shape)
-      $el.mapeditoractionmenu 'insert', shape
+
 
     $el.on 'mapeditor:feature_update', (e, shape) ->
 

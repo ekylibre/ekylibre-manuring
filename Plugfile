@@ -5,10 +5,6 @@ name "manuring"
 version "0.0.0"
 app '>= 1.1.0', '< 3.0.0'
 
-
-
 add_theme_stylesheet "*", "manure_map"
 
 require_javascript "manure_management"
-#register_manure_management_method :aquitaine_2013, 'Manuring::Aquitaine2013'
-#register_manure_management_method :poitou_charentes_2013, 'Manuring::PoitouCharentes2013'
