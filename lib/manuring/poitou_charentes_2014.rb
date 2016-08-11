@@ -221,11 +221,14 @@ module Manuring
       sets = crop_sets.map(&:name).map(&:to_s)
       campaigns = @campaign.previous.reorder(harvest_year: :desc)
       if sets.any? && @soil_nature
-        items = Manuring::Abaci::NmpPoitouCharentesAbacusFiveRow.select do |item|
+        items = Manuring::Abaci::NmpPoitouCharentesAbacusFive2014Row.select do |item|
           @soil_nature <= item.soil_nature &&
             sets.include?(item.cereal_typology.to_s)
         end
         if items.any?
+          # frequence d'apport de la matière organique
+          organic_input_frequency = :without_organic_matter
+          
           # if there are animal's activities on farm in campaign
           if Activity.of_campaign(campaigns).of_families(:animal_farming).any?
             # if animals moved on cultivable_zones in previous campaign then :husbandry_with_mixed_crop else :husbandry
@@ -234,18 +237,16 @@ module Manuring
             for c in campaigns
              pasturing_interventions << Intervention.of_campaign(c).of_nature(:pasturing)
             end
-            if pasturing_interventions.compact.any?
-              typology = :husbandry_with_mixed_crop
-            else
-              typology = :husbandry
+            ip = pasturing_interventions.compact.count
+            if ip >= 5 
+              organic_input_frequency = :three_years_organic_matter_frequency
+            elsif ip >= 3
+              organic_input_frequency = :three_to_five_years_organic_matter_frequency
+            elsif ip >= 1
+              organic_input_frequency = :five_years_organic_matter_frequency
             end
-          # elsif all production on the campagin is link to a crop_set :cereals then :cereal_crop
-          elsif Activity.of_campaign(campaigns).of_families(:cereal_crops).count == Activity.of_campaign(campaigns).of_families(:vegetal_crops).count
-            typology = :cereal_crop
-          else
-            typology = :mixed_crop
           end
-          quantity = items.first.send(typology).in_kilogram_per_hectare
+          quantity = items.first.send(organic_input_frequency).in_kilogram_per_hectare
         end
       end
       quantity
