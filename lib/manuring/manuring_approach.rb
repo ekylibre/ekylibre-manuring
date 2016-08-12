@@ -15,6 +15,7 @@ module Manuring
         @cultivation = manure_management_plan_zone.activity_production.current_cultivation
         @opened_at = manure_management_plan_zone.opened_at
         @mineral_nitrogen_at_opening = 0.0
+        @targets = Product.where(id: manure_management_plan_zone.activity_production.distributions.pluck(:target_id))
       end
       
       def crop_sets

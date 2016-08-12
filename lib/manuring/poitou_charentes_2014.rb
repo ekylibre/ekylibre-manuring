@@ -219,7 +219,7 @@ module Manuring
     def estimate_humus_mineralization
       quantity = 30.in_kilogram_per_hectare
       sets = crop_sets.map(&:name).map(&:to_s)
-      campaigns = @campaign.previous.reorder(harvest_year: :desc)
+      campaigns = @campaign.previous.reorder(harvest_year: :desc).limit(5)
       if sets.any? && @soil_nature
         items = Manuring::Abaci::NmpPoitouCharentesAbacusFive2014Row.select do |item|
           @soil_nature <= item.soil_nature &&
@@ -228,24 +228,21 @@ module Manuring
         if items.any?
           # frequence d'apport de la matière organique
           organic_input_frequency = :without_organic_matter
-          
-          # if there are animal's activities on farm in campaign
-          if Activity.of_campaign(campaigns).of_families(:animal_farming).any?
-            # if animals moved on cultivable_zones in previous campaign then :husbandry_with_mixed_crop else :husbandry
             
-            pasturing_interventions = []
+            organic_fertilization_interventions = []
             for c in campaigns
-             pasturing_interventions << Intervention.of_campaign(c).of_nature(:pasturing)
+              for target in @targets
+               organic_fertilization_interventions << Intervention.of_campaign(c).of_actions(:organic_fertilization).with_targets(target)
+              end
             end
-            ip = pasturing_interventions.compact.count
-            if ip >= 5 
+            ip = organic_fertilization_interventions.count
+            if ip >= 3 
               organic_input_frequency = :three_years_organic_matter_frequency
-            elsif ip >= 3
+            elsif ip >= 2
               organic_input_frequency = :three_to_five_years_organic_matter_frequency
             elsif ip >= 1
               organic_input_frequency = :five_years_organic_matter_frequency
             end
-          end
           quantity = items.first.send(organic_input_frequency).in_kilogram_per_hectare
         end
       end
