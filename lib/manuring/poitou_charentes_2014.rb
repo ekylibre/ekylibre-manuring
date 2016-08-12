@@ -12,6 +12,7 @@ module Manuring
       
       # Estimate "Pf"
       expected_yield = estimate_expected_yield if expected_yield.nil?
+      expected_yield ||= 0
       
       if @variety
         items = Manuring::Abaci::NmpPoitouCharentesAbacusThree2014Row.select do |i|
