@@ -1,50 +1,50 @@
-name,cereal_typology R(crop_sets),irrigated B,without_organic_matter I,five_years_organic_matter_frequency I,three_to_five_years_organic_matter_frequency I,three_years_organic_matter_frequency I,soil_nature R(soil_natures),
-aubues_corn_sorghum,corn_sorghum,,0,0,0,0,aubues_soil,
-aubues_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,aubues_soil,
-black_valley_corn_sorghum,corn_sorghum,,0,0,0,0,black_valley_soil,
-champagne_corn_sorghum,corn_sorghum,,0,0,0,0,champagne_soil,
-champagne_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,champagne_soil,
-red_chesnut_corn_sorghum,corn_sorghum,,0,0,0,0,chesnut_red_soil,
-red_chesnut_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,chesnut_red_soil,
-clay_limestone_corn_sorghum,corn_sorghum,,0,0,0,0,clay_limestone_soil,
-clay_limestone_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,clay_limestone_soil,
-flap_silt_corn_sorghum,corn_sorghum,,0,0,0,0,flap_silt_soil,
-flap_silt_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,flap_silt_soil,
-granite_arena_corn_sorghum,corn_sorghum,,0,0,0,0,granite_arena_soil,
-granite_arena_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,granite_arena_soil,
-hydromorph_sandy_clay_loam_corn_sorghum,corn_sorghum,,0,0,0,0,hydromorph_sandy_clay_loam_soil,
-hydromorph_sandy_clay_loam_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,hydromorph_sandy_clay_loam_soil,
-sand_corn_sorghum,corn_sorghum,,0,0,0,0,sand_soil,
-sand_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,sand_soil,
-silt_schist_corn_sorghum,corn_sorghum,,0,0,0,0,silt_schist_soil,
-silt_schist_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,silt_schist_soil,
-silty_clay_loam_corn_sorghum,corn_sorghum,,0,0,0,0,silty_clay_loam_soil,
-silty_clay_loam_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,silty_clay_loam_soil,
-silty_clay_corn_sorghum,corn_sorghum,,0,0,0,0,silty_clay_soil,
-silty_clay_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,silty_clay_soil,
-valley_terrace_corn_sorghum,corn_sorghum,,0,0,0,0,valley_terrace_soil,
-valley_terrace_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,valley_terrace_soil,
-aubues_spring_straw_cereal,spring_straw_cereal,,20,25,30,35,aubues_soil,Sols sur craie Nord Vienne
-black_valley_spring_straw_cereal,spring_straw_cereal,,30,35,40,45,black_valley_soil,Terres noires de vallées
-champagne_spring_straw_cereal,spring_straw_cereal,,20,25,30,35,champagne_soil,Sols sur craie Sud Charente et Charente-Maritime
-red_chesnut_spring_straw_cereal,spring_straw_cereal,,25,30,35,40,chesnut_red_soil,Terre rouge à chataigniers
-clay_limestone_spring_straw_cereal,spring_straw_cereal,,20,25,30,35,clay_limestone_soil,Sol argilo-calcaire (Groies)
-flap_silt_spring_straw_cereal,spring_straw_cereal,,25,30,35,40,flap_silt_soil,Sol limoneux battant
-hydromorph_sandy_clay_loam_spring_straw_cereal,spring_straw_cereal,,25,30,35,40,hydromorph_sandy_clay_loam_soil,Sol sablo-argileux hydromorphe
-sand_spring_straw_cereal,spring_straw_cereal,,25,30,35,40,sand_soil,Sol sableux
-silt_schist_spring_straw_cereal,spring_straw_cereal,,30,35,40,45,silt_schist_soil,Sol limoneux sur schiste ou gneiss
-silty_clay_loam_spring_straw_cereal,spring_straw_cereal,,25,30,35,40,silty_clay_loam_soil,Sol limono-argileux
-clay_schist_spring_straw_cereal,spring_straw_cereal,,25,30,35,40,clay_schist_soil,"Sols argileux sur granite, schiste ou gneiss"
-valley_terrace_spring_straw_cereal,spring_straw_cereal,,20,25,30,35,valley_terrace_soil,Sol de terrasse de vallée
-aubues_winter_straw_cereal,winter_straw_cereal,,30,35,40,45,aubues_soil,
-black_valley_winter_straw_cereal,winter_straw_cereal,,45,50,50,60,black_valley_soil,
-champagne_winter_straw_cereal,winter_straw_cereal,,30,35,40,45,champagne_soil,
-red_chesnut_winter_straw_cereal,winter_straw_cereal,,35,40,45,50,chesnut_red_soil,
-clay_limestone_winter_straw_cereal,winter_straw_cereal,,30,35,40,45,clay_limestone_soil,
-flap_silt_winter_straw_cereal,winter_straw_cereal,,35,40,45,50,flap_silt_soil,
-hydromorph_sandy_clay_loam_winter_straw_cereal,winter_straw_cereal,,35,40,45,50,hydromorph_sandy_clay_loam_soil,
-sand_winter_straw_cereal,winter_straw_cereal,,35,40,45,50,sand_soil,
-silt_schist_winter_straw_cereal,winter_straw_cereal,,40,40,45,45,silt_schist_soil,
-silty_clay_loam_winter_straw_cereal,winter_straw_cereal,,35,40,45,50,silty_clay_loam_soil,
-clay_schist_winter_straw_cereal,winter_straw_cereal,,35,40,45,50,clay_schist_soil,
-valley_terrace_winter_straw_cereal,winter_straw_cereal,,30,35,40,45,valley_terrace_soil,
+name,cereal_typology R(crop_sets),irrigated B,without_organic_matter I,five_years_organic_matter_frequency I,three_to_five_years_organic_matter_frequency I,three_years_organic_matter_frequency I,soil_nature R(soil_natures)
+aubues_corn_sorghum,corn_sorghum,,0,0,0,0,aubues_soil
+aubues_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,aubues_soil
+black_valley_corn_sorghum,corn_sorghum,,0,0,0,0,black_valley_soil
+champagne_corn_sorghum,corn_sorghum,,0,0,0,0,champagne_soil
+champagne_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,champagne_soil
+red_chesnut_corn_sorghum,corn_sorghum,,0,0,0,0,chesnut_red_soil
+red_chesnut_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,chesnut_red_soil
+clay_limestone_corn_sorghum,corn_sorghum,,0,0,0,0,clay_limestone_soil
+clay_limestone_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,clay_limestone_soil
+flap_silt_corn_sorghum,corn_sorghum,,0,0,0,0,flap_silt_soil
+flap_silt_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,flap_silt_soil
+granite_arena_corn_sorghum,corn_sorghum,,0,0,0,0,granite_arena_soil
+granite_arena_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,granite_arena_soil
+hydromorph_sandy_clay_loam_corn_sorghum,corn_sorghum,,0,0,0,0,hydromorph_sandy_clay_loam_soil
+hydromorph_sandy_clay_loam_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,hydromorph_sandy_clay_loam_soil
+sand_corn_sorghum,corn_sorghum,,0,0,0,0,sand_soil
+sand_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,sand_soil
+silt_schist_corn_sorghum,corn_sorghum,,0,0,0,0,silt_schist_soil
+silt_schist_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,silt_schist_soil
+silty_clay_loam_corn_sorghum,corn_sorghum,,0,0,0,0,silty_clay_loam_soil
+silty_clay_loam_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,silty_clay_loam_soil
+silty_clay_corn_sorghum,corn_sorghum,,0,0,0,0,silty_clay_soil
+silty_clay_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,silty_clay_soil
+valley_terrace_corn_sorghum,corn_sorghum,,0,0,0,0,valley_terrace_soil
+valley_terrace_irrigated_corn_sorghum,corn_sorghum,true,0,0,0,0,valley_terrace_soil
+aubues_spring_straw_cereal,spring_straw_cereal,,20,25,30,35,aubues_soil
+black_valley_spring_straw_cereal,spring_straw_cereal,,30,35,40,45,black_valley_soil
+champagne_spring_straw_cereal,spring_straw_cereal,,20,25,30,35,champagne_soil
+red_chesnut_spring_straw_cereal,spring_straw_cereal,,25,30,35,40,chesnut_red_soil
+clay_limestone_spring_straw_cereal,spring_straw_cereal,,20,25,30,35,clay_limestone_soil
+flap_silt_spring_straw_cereal,spring_straw_cereal,,25,30,35,40,flap_silt_soil
+hydromorph_sandy_clay_loam_spring_straw_cereal,spring_straw_cereal,,25,30,35,40,hydromorph_sandy_clay_loam_soil
+sand_spring_straw_cereal,spring_straw_cereal,,25,30,35,40,sand_soil
+silt_schist_spring_straw_cereal,spring_straw_cereal,,30,35,40,45,silt_schist_soil
+silty_clay_loam_spring_straw_cereal,spring_straw_cereal,,25,30,35,40,silty_clay_loam_soil
+clay_schist_spring_straw_cereal,spring_straw_cereal,,25,30,35,40,clay_schist_soil
+valley_terrace_spring_straw_cereal,spring_straw_cereal,,20,25,30,35,valley_terrace_soil
+aubues_winter_straw_cereal,winter_straw_cereal,,30,35,40,45,aubues_soil
+black_valley_winter_straw_cereal,winter_straw_cereal,,45,50,50,60,black_valley_soil
+champagne_winter_straw_cereal,winter_straw_cereal,,30,35,40,45,champagne_soil
+red_chesnut_winter_straw_cereal,winter_straw_cereal,,35,40,45,50,chesnut_red_soil
+clay_limestone_winter_straw_cereal,winter_straw_cereal,,30,35,40,45,clay_limestone_soil
+flap_silt_winter_straw_cereal,winter_straw_cereal,,35,40,45,50,flap_silt_soil
+hydromorph_sandy_clay_loam_winter_straw_cereal,winter_straw_cereal,,35,40,45,50,hydromorph_sandy_clay_loam_soil
+sand_winter_straw_cereal,winter_straw_cereal,,35,40,45,50,sand_soil
+silt_schist_winter_straw_cereal,winter_straw_cereal,,40,40,45,45,silt_schist_soil
+silty_clay_loam_winter_straw_cereal,winter_straw_cereal,,35,40,45,50,silty_clay_loam_soil
+clay_schist_winter_straw_cereal,winter_straw_cereal,,35,40,45,50,clay_schist_soil
+valley_terrace_winter_straw_cereal,winter_straw_cereal,,30,35,40,45,valley_terrace_soil

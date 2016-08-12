@@ -68,23 +68,28 @@
             success: (data) ->
               true
 
-    allQuestionsFilled? = (shape)
+    allQuestionsFilled = (feature) ->
+      filled = true
       Object.keys(feature.properties.modalAttributes.group).forEach (key, index) =>
-        question_group = feature.properties.modalAttributes.group[key]
-        Object.keys(properties_group).forEach (key, index) =>
-          question = question_group[key]
-          if !(question.value && question.value.length > 0)
-            return false
-      return true
+          question_group = feature.properties.modalAttributes.group[key]
+          Object.keys(question_group).forEach (key, index) =>
+            question = question_group[key]
+            if !(question.value)
+              filled = false
+      return filled
 
 
-    updateActionMenu = (shape) ->
-      if allQuestionsFilled?(shape)
-        
-
+    updateActionMenu = (feature) ->
+      if allQuestionsFilled(feature)
+        $el.mapeditoractionmenu 'apply', feature.properties.internal_id, ($el) ->
+          $el.addClass 'question-filled'
+          $el.removeClass 'question-empty'
+      else
+        $el.mapeditoractionmenu 'apply', feature.properties.internal_id, ($el) ->
+          $el.removeClass 'question-filled'
+          $el.addClass 'question-empty'
 
     $el.on 'mapeditor:loaded', ->
-
       cap_geojson = $el.data('cap-geojson')
       geojson = $el.data('firstrun-geojson')
 
@@ -92,6 +97,15 @@
       $el.mapeditor 'edit', geojson if geojson? and Object.keys(geojson).length
       $el.mapeditor 'view', 'show' if cap_geojson? and Object.keys(cap_geojson).length
       $el.mapeditor 'view', 'edit' if geojson? and Object.keys(geojson).length
+
+
+      $('.item_button').each (index, button) =>
+        $(button).on "click", (e) =>
+          e.stopPropagation()
+          id = $(button).closest('.item').attr('data-internal-id')
+          layer = $el.mapeditor 'findLayer', id
+          $el.mapeditor 'navigateToLayer', layer unless layer is undefined
+          $el.mapeditor "fire_modal_serie", layer.feature,layer unless layer is undefined
 
       updateMap()
 
@@ -101,20 +115,16 @@
     $el.on 'modal_validated', (e, shape) ->
       updateQuestion(shape)
       updateActionMenu(shape)
-      console.log(shape)
 
     $el.on 'mapeditor:serie_feature_add', (e, shape) ->
       if shape.properties.actionMenu
         $el.mapeditoractionmenu 'insert', shape
+        updateActionMenu(shape)
 
     $el.on ' mapeditor:edit_feature_add', (e, shape) ->
       saveGeoreading(shape)
 
-
-
-
     $el.on 'mapeditor:feature_update', (e, shape) ->
-
       $el.mapeditoractionmenu 'update', shape
       $el.mapeditor 'update'
 
