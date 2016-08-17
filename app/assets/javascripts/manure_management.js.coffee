@@ -5,18 +5,6 @@
 
     $el = $('input.manuring_step_form[data-map-editor]')
 
-    updateQuestion = (shape) ->
-      if $el.is(':ui-mapeditor')
-        data = shape: JSON.stringify shape
-        if shape
-          $.ajax
-            url: $el.data('update-question')
-            method: 'POST'
-            data: data
-            error: (request, status, error) ->
-              false
-            success: (status) ->
-              true
 
     updateMap = () ->
       if $el.is(':ui-mapeditor')
@@ -70,11 +58,10 @@
 
     allQuestionsFilled = (feature) ->
       filled = true
-      Object.keys(feature.properties.modalAttributes.group).forEach (key, index) =>
-          question_group = feature.properties.modalAttributes.group[key]
-          Object.keys(question_group).forEach (key, index) =>
-            question = question_group[key]
-            if !(question.value)
+      for attribute in feature.properties.popupAttributes
+        if attribute.type == 'group'
+          for popup_question_item in attribute.property_value
+            if !(popup_question_item.property_value)
               filled = false
       return filled
 
@@ -98,6 +85,37 @@
       $el.mapeditor 'view', 'show' if cap_geojson? and Object.keys(cap_geojson).length
       $el.mapeditor 'view', 'edit' if geojson? and Object.keys(geojson).length
 
+      map = $el.mapeditor 'get_map'
+      
+      map.on 'popupopen', (popup_event) =>
+        $('.update-questions').on 'click', (e) =>
+          zone_id = $('.popup-content').attr('manure_zone_id')
+          questions = {}
+          $('input.question_input', $('.form_properties')).each (index, input) =>
+            supply_nature = $(input).attr('supply_nature')
+            questions[supply_nature] = {} unless questions[supply_nature]
+            questions[supply_nature][$(input).attr('name')] =  $(input).val()
+          data =
+            zone_id: zone_id
+            questions: questions
+          $.ajax
+            url: $el.data('updateQuestions')
+            method: 'POST'
+            data: data
+            error: (request, status, error) ->
+              false
+            success: (data) ->
+              popup_content = popup_event.popup._source.options.popup_content
+              jquery_content = $($.parseHTML(popup_content))
+
+              jquery_content.find('input.question_input').each (index, input) =>
+                supply_nature = $(input).attr('supply_nature')
+                name = $(input).attr('name')
+                $(input).attr('value', questions[supply_nature][name])
+              popup_event.popup._source.options.popup_content = (((jquery_content.wrap("<div class='manure_popup'></div>")).parent()).html())
+
+          popup_event.target.closePopup()
+
 
       $('.item_button').each (index, button) =>
         $(button).on "click", (e) =>
@@ -108,7 +126,6 @@
           $el.mapeditor "fire_modal_serie", layer.feature,layer unless layer is undefined
 
       updateMap()
-
     $el.on 'mapchange', =>
       updateMap()
 
