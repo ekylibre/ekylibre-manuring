@@ -90,6 +90,8 @@
       map.on 'popupopen', (popup_event) =>
         $('.update-questions').on 'click', (e) =>
           zone_id = $('.popup-content').attr('manure_zone_id')
+          layer_id = $('.popup-header').find('.leaflet-popup-warning').attr('internal_id')
+          layer = $el.mapeditor 'findLayer', layer_id
           questions = {}
           $('input.question_input', $('.form_properties')).each (index, input) =>
             supply_nature = $(input).attr('supply_nature')
@@ -104,15 +106,20 @@
             data: data
             error: (request, status, error) ->
               false
-            success: (data) ->
-              popup_content = popup_event.popup._source.options.popup_content
+            success: (data) =>
+              feature = layer.feature
+              popup_content = feature.properties.popup_content
+
               jquery_content = $($.parseHTML(popup_content))
 
               jquery_content.find('input.question_input').each (index, input) =>
                 supply_nature = $(input).attr('supply_nature')
                 name = $(input).attr('name')
-                $(input).attr('value', questions[supply_nature][name])
-              popup_event.popup._source.options.popup_content = (((jquery_content.wrap("<div class='manure_popup'></div>")).parent()).html())
+                $(input).attr('value',questions[supply_nature][$(input).attr('name')])
+
+              feature.properties.popup_content = (((jquery_content.wrap("<div class='manure_popup'></div>")).parent()).html())
+              $el.mapeditor 'popupizeSerie', feature, layer
+
 
           popup_event.target.closePopup()
 
@@ -123,7 +130,7 @@
           id = $(button).closest('.item').attr('data-internal-id')
           layer = $el.mapeditor 'findLayer', id
           $el.mapeditor 'navigateToLayer', layer unless layer is undefined
-          $el.mapeditor "fire_modal_serie", layer.feature,layer unless layer is undefined
+          layer.fire('click')
 
       updateMap()
     $el.on 'mapchange', =>
