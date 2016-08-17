@@ -86,7 +86,7 @@
       $el.mapeditor 'view', 'edit' if geojson? and Object.keys(geojson).length
 
       map = $el.mapeditor 'get_map'
-      
+
       map.on 'popupopen', (popup_event) =>
         $('.update-questions').on 'click', (e) =>
           zone_id = $('.popup-content').attr('manure_zone_id')
