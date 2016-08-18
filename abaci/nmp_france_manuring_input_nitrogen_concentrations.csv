@@ -1,0 +1,58 @@
+name,label_fr,variant R(product_nature_variants),variety R(varieties),derivative_of R(varieties),nitrogen_concentration D,minimum_ratio_c_n D,maximum_ratio_c_n D
+diluted_cattle_slurry,Lisier de bovins dilué système couvert,cattle_slurry,slurry,bos,1.6,0,100
+undiluted_cattle_slurry,Lisier de bovins non dilué,cattle_slurry,slurry,bos,4.5,0,100
+calf_slurry,Lisier de veaux,calf_slurry,slurry,bos,1.5,0,100
+wine_vinasse,Vinasse de distillerie,wine_vinasse,pomace,grape,0.2,0,100
+sugar_vinasse,Vinasse de betterave concentrée,sugar_vinasse,pomace,grape,20,0,100
+pig_slurry,Lisier de porc mixte,pig_slurry,slurry,sus,3.5,0,100
+dry_poultry_guano,Fientes de volaille séchées (80%MS),poultry_guano,guano,phasianidae,40,0,100
+poultry_guano,Fientes de volailles 60 % MS,poultry_guano,guano,phasianidae,24,0,100
+poultry_compost,Compost de fientes de volailles avec litière de moins de 6 mois,poultry_compost,compost,phasianidae,23,0,100
+old_poultry_compost,Compost de fientes de volailles avec litière de 6 mois à 10 mois,poultry_compost,compost,phasianidae,23,0,100
+cattle_compost,Composts de fumiers de bovins jeune de moins de 6 mois,cattle_compost,compost,bos,6.3,0,100
+old_cattle_compost,Composts de fumiers de bovins vieux de plus de 6 mois,cattle_compost,compost,bos,6.5,0,100
+litter_poultry_guano,Fientes de volaille avec litière,poultry_guano,guano,phasianidae,25,0,100
+litter_cattle_manure,Fumier de bovin pailleux de litière accumulée,cattle_manure,manure,bos,5.8,0,100
+cowshed_cattle_manure,Fumier de bovin décomposé d’étable animaux entravés,cattle_manure,manure,bos,5.3,0,100
+pig_manure,Fumier de porcs,pig_manure,manure,sus,8,0,100
+capra_manure,Fumier de caprins,capra_manure,manure,capra,7,0,100
+ovis_manure,Fumier d’ovins,ovis_manure,manure,ovis,7,0,100
+horse_manure,Fumier de cheval,horse_manure,manure,equus,8,0,100
+old_green_compost,Compost de déchets verts de plus de 6 mois,green_compost,compost,plant,10,0,100
+green_compost,Compost de déchets verts de moins de 6 mois,green_compost,compost,plant,10,0,100
+bio_urban_compost,Compost de bio-déchets,urban_compost,compost,bioproduct,15,0,100
+rubbish_urban_compost,Compost d’ordures ménagères résiduelles (par TMB),urban_compost,compost,bioproduct,10,0,100
+raw_anaerobic_digestion_digestate,Digestats bruts,anaerobic_digestion_digestate,digestate,bioproduct,6,0,100
+liquid_anaerobic_digestion_digestate,Fraction liquide après séparation de phase,anaerobic_digestion_digestate,digestate,bioproduct,5.2,0,100
+dry_anaerobic_digestion_digestate,Fraction sèche après séparation de phase,anaerobic_digestion_digestate,digestate,bioproduct,2,0,100
+liquid_activated_sludge,"Boues activées liquides IAA (C/N = 4,4)",activated_sludge,digestate,bioproduct,2.9,4,5
+dry_liquid_activated_sludge,"Boues activées liquides égouttées IAA (C/N = 4,4)",activated_sludge,digestate,bioproduct,4.1,4,5
+urban_liquid_activated_sludge,"Boues activées liquides urbaines (C/N = 4,9)",activated_sludge,digestate,bioproduct,1.9,4,5
+urban_dry_liquid_activated_sludge,"Boues activées liquides égouttées urbaines (C/N = 4,9)",activated_sludge,digestate,bioproduct,3.3,4,5
+pressed_unlimed_activated_sludge,"Boues activées filtre presse non chaulées (C/N = 5,9)",activated_sludge,digestate,bioproduct,13,5,6
+stodgy_activated_sludge,"Boues activées pâteuses filtre à bandes (C/N = 5,2)",activated_sludge,digestate,bioproduct,11,5,6
+dry_litter_activated_sludge,"Boues activées lits de séchage (C/N = 5,4)",activated_sludge,digestate,bioproduct,20.5,5,6
+rhizophytes_litter_activated_sludge,"Boues activées lits à rhizophytes (C/N =5,9)",activated_sludge,digestate,bioproduct,8,5,6
+dehydrated_limed_activated_sludge,"Boues activées déshydratées chaulées (C/N = 5,3)",activated_sludge,digestate,bioproduct,10.2,5,6
+dry_activated_sludge,Boues activées séchées (C/N = 6),activated_sludge,digestate,bioproduct,43,5.5,6.5
+anaerobic_liquid_digestate_sludge,"Boues digérées anaérobies liquides IAA (C/N = 4,2) 2,1",digestate_sludge,digestate,bioproduct,2.1,4,5
+anaerobic_dehydrated_digestate_sludge,"Boues digérées anaérobies déshydratées (C/N = 5,9) 11,3",digestate_sludge,digestate,bioproduct,11.3,5.5,6.5
+anaerobic_dehydrated_limed_digestate_sludge,"Boues digérées anaérobies déshydratées chaulées (C/N = 6) 9,5",digestate_sludge,digestate,bioproduct,9.5,5.5,6.5
+anaerobic_dry_digestate_sludge,"Boues digérées anaérobies sèchées (C/N = 6,1)",digestate_sludge,digestate,bioproduct,43,6,7
+mixed_sludge_1,"Boues lit bactérien/disque bio liquides (C/N = 7,5)",mixed_sludge,digestate,bioproduct,1.9,7,8
+mixed_sludge_2,Boues lit bactérien déshydratées chaulées (C/N = 5),mixed_sludge,digestate,bioproduct,7.5,4,6
+mixed_sludge_3,"Boues décanteur digesteur (C/N = 8,1)",mixed_sludge,digestate,bioproduct,2.3,8,9
+mixed_sludge_4,Boues décanteur (C/N = 6 à 9),mixed_sludge,digestate,bioproduct,2.1,6,9
+mixed_sludge_5,Boues de curage de lagunes urbaines (C/N = 6 à 11),mixed_sludge,digestate,bioproduct,1.7,6,11
+mixed_sludge_6,"Boues physicochimiques déshydratées (C/N = 5,5 à 17)",mixed_sludge,digestate,bioproduct,8.8,5.5,17
+mixed_sludge_7,Boues physico-chimiques déshydratées chaulées (C/N = 10 à 13),mixed_sludge,digestate,bioproduct,6.7,10,13
+mixed_sludge_8,Boues digérées traitées thermiquement,mixed_sludge,digestate,bioproduct,9 .8,13,15
+mixed_sludge_9,"Matières de vidange (C/N = 11,8)",mixed_sludge,digestate,bioproduct,1.3,11,12
+mixed_sludge_10,Boues mixtes papetières C/N<15,mixed_sludge,digestate,bioproduct,4.8,0,15
+mixed_sludge_11,Boues mixtes papetières 15<C/N<20,mixed_sludge,digestate,bioproduct,4.2,15,20
+mixed_sludge_12,Boues mixtes papetières 20<C/N<35,mixed_sludge,digestate,bioproduct,2.8,20,35
+mixed_sludge_13,Boues mixtes papetières,mixed_sludge,digestate,bioproduct,1.6,0,100
+mixed_sludge_14,Boues de désencrage 40<C/N<70,mixed_sludge,digestate,bioproduct,1.6,40,70
+digestate_compost,"Compost de boues (C/N = 11,8)",digestate_compost,compost,digestate,11.5,11,12
+pig_compost,Compost de fumier de porcs jeune (moins de 6 mois),pig_compost,compost,sus,6.7,0,100
+old_pig_compost,Compost de fumier de ports âgé (de 6 à 10 mois),pig_compost,compost,sus,6.7,0,100

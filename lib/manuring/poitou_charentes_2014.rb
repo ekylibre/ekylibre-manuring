@@ -473,10 +473,16 @@ module Manuring
               # get the crop_set
               sets = crop_sets.map(&:name).map(&:to_s)
               # get keq
-              items = Manuring::Abaci::NmpPoitouCharentesAbacusEightRow.select do |item|
-                variant.to_s == item.variant.to_s && sets.include?(item.crop.to_s) && month.to_i >= item.input_period_start.to_i
+              items = Manuring::Abaci::NmpPoitouCharentesAbacusKeq2014Row.select do |item|
+                variant.to_s == item.variant.to_s && sets.include?(item.crop.to_s) && month.to_i >= item.input_period_start.to_i && month.to_i <= item.input_period_stop.to_i
               end
-              keq = items.first.keq.to_d if items.any?
+              if items.any?
+                i = items.first
+                puts "Item #{i.label} with keq = #{i.keq} was found in abacus for intervention input #{variant.inspect} for #{intervention.name}".inspect.red
+                keq = i.keq.to_d
+              else
+                puts "No items in abacus for intervention input #{variant.inspect}".inspect.red
+              end 
               # get net_mass (n) and working area for input density
               n = input.quantity
               if n.dimension == :mass_area_density && input.quantity_indicator_name == 'mass_area_density'
