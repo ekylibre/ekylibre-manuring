@@ -8,9 +8,10 @@ module Manuring
     # http://www.poitou-charentes.developpement-durable.gouv.fr
     # Arrété 149/SGAR/2014 du 23/05/2014
     
+    # Estimate "Pf"
     def estimated_needs(expected_yield = nil)
       
-      # Estimate "Pf"
+      # y
       expected_yield = estimate_expected_yield if expected_yield.nil?
       expected_yield ||= 0
       
@@ -22,6 +23,7 @@ module Manuring
             (i.maximum_yield_aim.blank? || expected_yield <= i.maximum_yield_aim) &&
             (i.irrigated.blank? || (@irrigated && i.irrigated) || (!@irrigated && !i.irrigated))
         end
+        # b
         if items.any?
           b = items.first.coefficient
         elsif @variety <= :triticum_aestivum
@@ -38,6 +40,35 @@ module Manuring
       #   b = items.first.coefficient
       # end
       expected_yield.in_kilogram_per_hectare * b / 100.0.to_d
+    end
+    
+    # Estimate "S" soil_supply
+    def soil_supplies
+      values = estimated_supply
+      
+      # S
+      s = 0.in_kilogram_per_hectare
+
+      sets = crop_sets.map(&:name).map(&:to_s)
+      
+      # Céréales, Tournesol, Lin, Chanvre, Colza, Tabac et Portes graines
+      if @variety && (@variety <= :poaceae || @variety <= :brassicaceae || @variety <= :medicago || @variety <= :helianthus || @variety <= :nicotiana || @variety <= :linum)
+        # Si Type de sol est Argilo-calcaire ou terres rouges à châtaigniers
+        if @soil_nature.include?(Nomen::SoilNature[:clay_limestone_soil]) || @soil_nature.include?(Nomen::SoilNature[:chesnut_red_soil]) and @variety and @variety > :nicotiana
+          
+          # S = Po + Mr + MrCi
+          s = values[:soil_production] + values[:previous_cultivation_residue_mineralization] + values[:intermediate_cultivation_residue_mineralization]
+                                       
+        else
+          # S = Pi + Ri + Mh + Mhp + Mr + MrCi + Rf
+          s = values[:absorbed_nitrogen_at_opening] + values[:mineral_nitrogen_at_opening] + values[:humus_mineralization] +
+                  values[:meadow_humus_mineralization] + values[:previous_cultivation_residue_mineralization] + values[:intermediate_cultivation_residue_mineralization] +
+                  values[:nitrogen_at_closing]
+        end
+
+      end
+      return s
+
     end
     
     # compute all supply parameters
@@ -86,6 +117,8 @@ module Manuring
       
       # X
       input = 0.in_kilogram_per_hectare
+      # C
+      c = estimated_needs - soil_supplies
 
       sets = crop_sets.map(&:name).map(&:to_s)
       
@@ -95,32 +128,17 @@ module Manuring
         if @soil_nature.include?(Nomen::SoilNature[:clay_limestone_soil]) || @soil_nature.include?(Nomen::SoilNature[:chesnut_red_soil]) and @variety and @variety > :nicotiana
           # CAU = 0.8
           # X = [(Pf - Po - Mr - MrCi - Nirr) / CAU] - Xa
+          # 
+          # X = [(C - Nirr) / CAU] - Xa
           fertilizer_apparent_use_coeffient = 0.8.to_d
-          input = (((estimated_needs -
-                                       values[:soil_production] -
-                                       values[:previous_cultivation_residue_mineralization] -
-                                       values[:intermediate_cultivation_residue_mineralization] -
-                                       values[:irrigation_water_nitrogen]) / fertilizer_apparent_use_coeffient) -
-                                     values[:organic_fertilizer_mineral_fraction])
+          input = (((c - values[:irrigation_water_nitrogen]) / fertilizer_apparent_use_coeffient) - values[:organic_fertilizer_mineral_fraction])
         else
           # X = Pf - Pi - Ri - Mh - Mhp - Mr - MrCi - Nirr - Xa + Rf
-          input = (estimated_needs -
-                                     values[:absorbed_nitrogen_at_opening] -
-                                     values[:mineral_nitrogen_at_opening] -
-                                     values[:humus_mineralization] -
-                                     values[:meadow_humus_mineralization] -
-                                     values[:previous_cultivation_residue_mineralization] -
-                                     values[:intermediate_cultivation_residue_mineralization] -
-                                     values[:irrigation_water_nitrogen] -
-                                     values[:organic_fertilizer_mineral_fraction] +
-                                     values[:nitrogen_at_closing])
+          #
+          # X = C - Nirr - Xa
+          input = ( c - values[:irrigation_water_nitrogen] - values[:organic_fertilizer_mineral_fraction] )
         end
 
-        if @soil_nature.include?(Nomen::SoilNature[:clay_limestone_soil])
-          input *= 1.15.to_d
-        else
-          input *= 1.10.to_d
-        end
       end
 
       # Légumes / Arboriculture / Vignes : Dose plafond à partir d'abaques
@@ -133,6 +151,11 @@ module Manuring
       # if input < 0 then 0
       if input.to_d < 0.0
         input = 0.in_kilogram_per_hectare
+      end
+      
+      # if input between 0 and 30 then 30
+      if input.to_d > 0.0 && input.to_d <= 30.0
+        input = 30.in_kilogram_per_hectare
       end
 
       # if input > MAX then MAX
@@ -426,17 +449,18 @@ module Manuring
     # Estimate Xa
     def estimate_organic_fertilizer_mineral_fraction
       quantity = 0.in_kilogram_per_hectare
-      # FIXME: be careful : started_at forced to 15/07/N-1
-      started_at = Time.new(@campaign.harvest_year - 1, 7, 15)
+      started_at = @activity_production.started_on.to_time || Time.new(@campaign.harvest_year - 1, 7, 15)
       stopped_at = @opened_at
       global_xa = []
-      if interventions = @activity_production.interventions.real.where(state: 'done').of_nature(:soil_enrichment).between(started_at, stopped_at)
+      interventions = @activity_production.interventions.of_actions(:organic_fertilization).with_targets(@targets).between(started_at, stopped_at).where(nature: 'record')
+      if interventions.any?
         for intervention in interventions
-          # get the working area (hectare)
-          working_area = intervention.casts.of_role('soil_enrichment-target').first.population
+          # get the working area (hectare) concerning only the targets
+          targets = intervention.targets.of_actors(@targets)
+          targets_working_area = targets.with_working_zone.map(&:working_zone_area).sum.in(:hectare)
           # get the population of each intrant
-          for input in intervention.casts.of_role('soil_enrichment-input')
-            if i = input.actor
+          for input in intervention.inputs
+            if i = input.product
               # get nitrogen concentration (t) in percent
               t = i.nitrogen_concentration.to_d(:percent)
               # get the keq coefficient from abacus_8
@@ -454,8 +478,13 @@ module Manuring
               end
               keq = items.first.keq.to_d if items.any?
               # get net_mass (n) and working area for input density
-              n = i.net_mass(input).to_d(:ton)
-              q = (n / working_area).to_d if working_area != 0
+              n = input.quantity
+              if n.dimension == :mass_area_density && input.quantity_indicator_name == 'mass_area_density'
+                q = n.to_d(:ton_per_hectare)
+              elsif n.dimension == :mass && input.quantity_indicator_name == 'net_mass'
+                net_mass = n.to_d(:ton)
+                q = net_mass.to_d / targets_working_area.to_d if targets_working_area.to_d(:hectare) != 0
+              end
               xa = (t / 10) * keq * q if t && keq && q
               global_xa << xa
             end

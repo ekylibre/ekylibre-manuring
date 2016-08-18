@@ -31,13 +31,12 @@ module Manuring
         return @crop_sets
       end
       
-      
+      # compute global daily nitrogen production (in kilogram_per_day)
       def animal_output
-        
+        # get all animals in current campaign
         animals = Animal.at(@opened_at)
-        
+        # return global daily nitrogen production for these animals
         return daily_nitrogen_production(animals)
-        
       end
       
       # compute average annual milk production per animal from annual milk production
