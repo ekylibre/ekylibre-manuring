@@ -56,23 +56,32 @@
             success: (data) ->
               true
 
-    allQuestionsFilled = (feature) ->
+    allQuestionsFilled = (questions) ->
+      #Check if every key has a value
       filled = true
-      for attribute in feature.properties.popupAttributes
-        if attribute.type == 'group'
-          for popup_question_item in attribute.property_value
-            if !(popup_question_item.property_value)
-              filled = false
+      for supply_nature of questions
+        question_group = questions[supply_nature]
+        for question_key of question_group
+          if !question_group[question_key]
+            return false
       return filled
 
+    get_questions = (popup_content) ->
+      questions = {}
+      jquery_content = $($.parseHTML(popup_content))
+      jquery_content.find('input.question_input').each (index, input) =>
+        supply_nature = $(input).attr('supply_nature')
+        questions[supply_nature] = {} unless questions[supply_nature]
+        questions[supply_nature][$(input).attr('name')] =  $(input).val()
+      return questions
 
-    updateActionMenu = (feature) ->
-      if allQuestionsFilled(feature)
-        $el.mapeditoractionmenu 'apply', feature.properties.internal_id, ($el) ->
+    updateActionMenu = (questions, internal_id) ->
+      if allQuestionsFilled(questions)
+        $el.mapeditoractionmenu 'apply', internal_id, ($el) ->
           $el.addClass 'question-filled'
           $el.removeClass 'question-empty'
       else
-        $el.mapeditoractionmenu 'apply', feature.properties.internal_id, ($el) ->
+        $el.mapeditoractionmenu 'apply', internal_id, ($el) ->
           $el.removeClass 'question-filled'
           $el.addClass 'question-empty'
 
@@ -93,13 +102,15 @@
           layer_id = $('.popup-header').find('.leaflet-popup-warning').attr('internal_id')
           layer = $el.mapeditor 'findLayer', layer_id
           questions = {}
-          $('input.question_input', $('.form_properties')).each (index, input) =>
+          $('.popup-content').find('input.question_input').each (index, input) =>
             supply_nature = $(input).attr('supply_nature')
             questions[supply_nature] = {} unless questions[supply_nature]
             questions[supply_nature][$(input).attr('name')] =  $(input).val()
+
           data =
             zone_id: zone_id
             questions: questions
+          #Ajax to update model with questions answers
           $.ajax
             url: $el.data('updateQuestions')
             method: 'POST'
@@ -108,21 +119,23 @@
               false
             success: (data) =>
               feature = layer.feature
+
+              #update popup content
               popup_content = feature.properties.popup_content
-
               jquery_content = $($.parseHTML(popup_content))
-
               jquery_content.find('input.question_input').each (index, input) =>
                 supply_nature = $(input).attr('supply_nature')
                 name = $(input).attr('name')
                 $(input).attr('value',questions[supply_nature][$(input).attr('name')])
-
               feature.properties.popup_content = (((jquery_content.wrap("<div class='manure_popup'></div>")).parent()).html())
+
+              #update action_menu
+              updateActionMenu(questions, feature.properties.internal_id)
+
+              #Create new popup with updated content
               $el.mapeditor 'popupizeSerie', feature, layer
 
-
           popup_event.target.closePopup()
-
 
       $('.item_button').each (index, button) =>
         $(button).on "click", (e) =>
@@ -130,20 +143,17 @@
           id = $(button).closest('.item').attr('data-internal-id')
           layer = $el.mapeditor 'findLayer', id
           $el.mapeditor 'navigateToLayer', layer unless layer is undefined
-          layer.fire('click')
+          layer.openPopup()
 
       updateMap()
     $el.on 'mapchange', =>
       updateMap()
 
-    $el.on 'modal_validated', (e, shape) ->
-      updateQuestion(shape)
-      updateActionMenu(shape)
-
-    $el.on 'mapeditor:serie_feature_add', (e, shape) ->
-      if shape.properties.actionMenu
-        $el.mapeditoractionmenu 'insert', shape
-        updateActionMenu(shape)
+    $el.on 'mapeditor:serie_feature_add', (e, feature) ->
+      if feature.properties.actionMenu
+        $el.mapeditoractionmenu 'insert', feature
+        questions = get_questions(feature.properties.popup_content)
+        updateActionMenu(questions, feature.properties.internal_id)
 
     $el.on ' mapeditor:edit_feature_add', (e, shape) ->
       saveGeoreading(shape)
