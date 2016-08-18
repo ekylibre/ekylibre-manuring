@@ -15,9 +15,9 @@ module Manuring
       expected_yield = estimate_expected_yield if expected_yield.nil?
       expected_yield ||= 0
       
-      if @variety
+      if @variety_nomen
         items = Manuring::Abaci::NmpPoitouCharentesAbacusThree2014Row.select do |i|
-          @variety <= i.cultivation_variety &&
+          @variety_nomen <= i.cultivation_variety &&
             (i.usage.blank? || i.usage.to_sym == @usage) &&
             (i.minimum_yield_aim.blank? || i.minimum_yield_aim <= expected_yield) &&
             (i.maximum_yield_aim.blank? || expected_yield <= i.maximum_yield_aim) &&
@@ -26,11 +26,11 @@ module Manuring
         # b
         if items.any?
           b = items.first.coefficient
-        elsif @variety <= :triticum_aestivum
+        elsif @variety_nomen <= :triticum_aestivum
           b ||= 3
-        elsif @variety <= :triticum_durum
+        elsif @variety_nomen <= :triticum_durum
           b ||= 3.5
-        elsif @variety <= :zea
+        elsif @variety_nomen <= :zea
           b ||= 2.4
         else
           b = 0
@@ -52,9 +52,9 @@ module Manuring
       sets = crop_sets.map(&:name).map(&:to_s)
       
       # Céréales, Tournesol, Lin, Chanvre, Colza, Tabac et Portes graines
-      if @variety && (@variety <= :poaceae || @variety <= :brassicaceae || @variety <= :medicago || @variety <= :helianthus || @variety <= :nicotiana || @variety <= :linum)
+      if @variety_nomen && (@variety_nomen <= :poaceae || @variety_nomen <= :brassicaceae || @variety_nomen <= :medicago || @variety_nomen <= :helianthus || @variety_nomen <= :nicotiana || @variety_nomen <= :linum)
         # Si Type de sol est Argilo-calcaire ou terres rouges à châtaigniers
-        if @soil_nature.include?(Nomen::SoilNature[:clay_limestone_soil]) || @soil_nature.include?(Nomen::SoilNature[:chesnut_red_soil]) and @variety and @variety > :nicotiana
+        if (@soil_nature_nomen <= :clay_limestone_soil || @soil_nature_nomen <= :chesnut_red_soil) and @variety_nomen > :nicotiana
           
           # S = Po + Mr + MrCi
           s = values[:soil_production] + values[:previous_cultivation_residue_mineralization] + values[:intermediate_cultivation_residue_mineralization]
@@ -123,9 +123,9 @@ module Manuring
       sets = crop_sets.map(&:name).map(&:to_s)
       
       # Céréales, Tournesol, Lin, Chanvre, Colza, Tabac et Portes graines
-      if @variety && (@variety <= :poaceae || @variety <= :brassicaceae || @variety <= :medicago || @variety <= :helianthus || @variety <= :nicotiana || @variety <= :linum)
+      if @variety_nomen && (@variety_nomen <= :poaceae || @variety_nomen <= :brassicaceae || @variety_nomen <= :medicago || @variety_nomen <= :helianthus || @variety_nomen <= :nicotiana || @variety_nomen <= :linum)
         # Si Type de sol est Argilo-calcaire ou terres rouges à châtaigniers
-        if @soil_nature.include?(Nomen::SoilNature[:clay_limestone_soil]) || @soil_nature.include?(Nomen::SoilNature[:chesnut_red_soil]) and @variety and @variety > :nicotiana
+        if (@soil_nature_nomen <= :clay_limestone_soil || @soil_nature_nomen <= :chesnut_red_soil) and @variety_nomen > :nicotiana
           # CAU = 0.8
           # X = [(Pf - Po - Mr - MrCi - Nirr) / CAU] - Xa
           # 
@@ -143,7 +143,7 @@ module Manuring
 
       # Légumes / Arboriculture / Vignes : Dose plafond à partir d'abaques
       # X ≤ nitrogen_input_max – Nirr – Xa
-      if @variety && (@variety <= :vitis || @variety <= :solanum_tuberosum || @variety <= :cucumis || sets.include?('gardening_vegetables'))
+      if @variety_nomen && (@variety_nomen <= :vitis || @variety_nomen <= :solanum_tuberosum || @variety_nomen <= :cucumis || sets.include?('gardening_vegetables'))
         input = values[:maximum_nitrogen_input] - values[:irrigation_water_nitrogen] - values[:organic_fertilizer_mineral_fraction]
       end
       # @zone.mark(:nitrogen_area_density, nitrogen_input.round(3), subject: :support)
@@ -169,17 +169,20 @@ module Manuring
     
     # Estimate "y"
     def estimate_expected_yield
-      cultivation_varieties = (@variety ? @variety.self_and_parents : :undefined)
-      # TODO
+      cultivation_varieties = (@variety_nomen ? @variety_nomen.self_and_parents : :undefined)
+      capacity = @available_water_capacity.in_liter_per_square_meter
       # 1 / Calcul des références disponibles sur l'exploitation (au moins de cinq valeurs pour une condition de sol et de culture)
       # Moyenne des interventions de récolte sur les 5 dernières années
-      
+      # TODO
+
       # 2 / Référence par type de sol (Céréales)
-      if capacity = @available_water_capacity.in_liter_per_square_meter and items = Manuring::Abaci::NmpPoitouCharentesAbacusTwoRow.where(cultivation_variety: cultivation_varieties, soil_nature: @soil_nature) and items = items.select { |i| i.minimum_available_water_capacity.in_liter_per_square_meter <= capacity && capacity < i.maximum_available_water_capacity.in_liter_per_square_meter } and items.any?
-        # puts items.inspect.green
+      if capacity and cultivation_varieties and (@variety_nomen <= :triticosecale || @variety_nomen <= :triticum_aestivum || @variety_nomen <= :triticum_durum || @variety_nomen <= :hordeum) and @soil_nature and items = Manuring::Abaci::NmpPoitouCharentesAbacusTwoRow.where(cultivation_variety: cultivation_varieties.map(&:name), soil_nature: @soil_nature) and items = items.select { |i| i.minimum_available_water_capacity.in_liter_per_square_meter <= capacity && capacity < i.maximum_available_water_capacity.in_liter_per_square_meter } and items.any?
+        
         expected_yield = items.first.expected_yield.in_quintal_per_hectare
+        
       # 3 / Référence par département (Avoine, Seigle et Mélange de céréales)
-      elsif items = Manuring::Abaci::NmpFranceCultivationYield.where(cultivation_variety: cultivation_varieties, administrative_area: @administrative_area || :undefined) and items.any? and (@variety <= :avena || @variety <= :secale)
+      elsif cultivation_varieties and @administrative_area and items = Manuring::Abaci::NmpFranceCultivationYield.where(cultivation_variety: cultivation_varieties.map(&:name), administrative_area: @administrative_area) and (@variety_nomen <= :avena || @variety_nomen <= :secale || @variety_nomen <= :poaceae) and items.any?
+      
         expected_yield = items.first.expected_yield.in_quintal_per_hectare
       # 4 / Si aucuns des cas, receuil de la valeur saisie dans le budget
       else
@@ -192,7 +195,7 @@ module Manuring
         # return budget estimate yield
         options = {}
         options[variety] = variety
-        expected_yield = @activity_production.estimate_yield(options)
+        expected_yield = @activity_production.estimate_yield(@campaign, options)
       end
       # puts "======================================================".red
       return expected_yield
@@ -203,7 +206,7 @@ module Manuring
     # Estimate "Pi"
     def estimate_absorbed_nitrogen_at_opening
       quantity = 10.in_kilogram_per_hectare
-      if @cultivation.blank? && @variety && (@variety <= :zea || @variety <= :sorghum || @variety <= :helianthus || @variety <= :linum || @variety <= :cannabis || @variety <= :nicotiana)
+      if @cultivation.blank? && @variety_nomen && (@variety_nomen <= :zea || @variety_nomen <= :sorghum || @variety_nomen <= :helianthus || @variety_nomen <= :linum || @variety_nomen <= :cannabis || @variety_nomen <= :nicotiana)
         quantity = 0.in_kilogram_per_hectare
       elsif @cultivation
         if count = @cultivation.leaf_count(at: @opened_at) and activity.nature.to_sym == :cereal_crops
@@ -213,7 +216,7 @@ module Manuring
           if items.any?
             quantity = items.first.absorbed_nitrogen.in_kilogram_per_hectare
           end
-        elsif @variety && @variety <= :brassica_napus && @cultivation.indicators_list.include?(:fresh_mass) && @cultivation.indicators_list.include?(:net_surface_area)
+        elsif @variety_nomen && @variety_nomen <= :brassica_napus && @cultivation.indicators_list.include?(:fresh_mass) && @cultivation.indicators_list.include?(:net_surface_area)
           items = Manuring::Abaci::NmpPoitouCharentesAbacusTwelveRow.select do |item|
             @administrative_area <= item.administrative_area
           end
@@ -244,9 +247,9 @@ module Manuring
       quantity = 30.in_kilogram_per_hectare
       sets = crop_sets.map(&:name).map(&:to_s)
       campaigns = @campaign.previous.reorder(harvest_year: :desc).limit(5)
-      if sets.any? && @soil_nature
+      if sets.any? && @soil_nature_nomen
         items = Manuring::Abaci::NmpPoitouCharentesAbacusFive2014Row.select do |item|
-          @soil_nature <= item.soil_nature &&
+          @soil_nature_nomen <= item.soil_nature &&
             sets.include?(item.cereal_typology.to_s)
         end
         if items.any?
@@ -461,10 +464,10 @@ module Manuring
           # get the population of each intrant
           for input in intervention.inputs
             if i = input.product
-              # get nitrogen concentration (t) in percent
-              t = i.nitrogen_concentration.to_d(:percent)
-              # get the keq coefficient from abacus_8
-              # get the variant reference_name
+              
+              # get nitrogen concentration (t)
+              t = estimate_nitrogen_concentration_inside_input_product(i)
+
               variant = i.variant_reference_name
               # get the period (month of intervention)
               month = intervention.started_at.strftime('%m')
@@ -491,7 +494,7 @@ module Manuring
                 net_mass = n.to_d(:ton)
                 q = net_mass.to_d / targets_working_area.to_d if targets_working_area.to_d(:hectare) != 0
               end
-              xa = (t / 10) * keq * q if t && keq && q
+              xa = t * keq * q if t && keq && q
               global_xa << xa
             end
           end
@@ -500,16 +503,40 @@ module Manuring
       quantity = global_xa.compact.sum.in_kilogram_per_hectare
       quantity
     end
-
+    
+    # Estimate Npro (nitrogen concentration in a product) **in kg N per ton**
+    def estimate_nitrogen_concentration_inside_input_product(product)
+      #TODO implement grab nitrogen concentration from a fertilizer analysis if the current variant of the product is concer by the fertilizer analysis
+      # fertilizer_analysis = Analysis.of_nature("fertilizer_analysis")
+      
+      # get value from abacus
+       
+      if product.variant && product.variety && product.derivative_of
+        
+        v = Nomen::Variety[product.variety]
+        d = Nomen::Variety[product.derivative_of]
+        
+        items = Manuring::Abaci::NmpFranceManuringInputNitrogenConcentration.select do |item|
+          (product.variant == item.variant) || (v <= item.variety && d <= item.derivative_of)
+        end
+        if items.any?
+          t = items.first.nitrogen_concentration.to_d
+        # get the value in the product indicator
+        elsif product.nitrogen_concentration
+          t = product.nitrogen_concentration.to_d(:percent) * 10
+        end
+      end
+    end
+    
     # Estimate Rf
     def estimate_nitrogen_at_closing
       quantity = 0.in_kilogram_per_hectare
-      if @variety && @variety <= :nicotiana
+      if @variety_nomen && @variety_nomen <= :nicotiana
         quantity = 50.in_kilogram_per_hectare
       end
       if @soil_nature && capacity = @available_water_capacity.in_liter_per_square_meter
         items = Manuring::Abaci::NmpPoitouCharentesAbacusNineRow.select do |item|
-          @soil_nature <= item.soil_nature && item.minimum_available_water_capacity.in_liter_per_square_meter <= capacity && capacity < item.maximum_available_water_capacity.in_liter_per_square_meter
+          @soil_nature_nomen <= item.soil_nature && item.minimum_available_water_capacity.in_liter_per_square_meter <= capacity && capacity < item.maximum_available_water_capacity.in_liter_per_square_meter
         end
         quantity = items.first.rf.in_kilogram_per_hectare if items.any?
       end
@@ -524,7 +551,7 @@ module Manuring
       water_falls = 380.in_liter_per_square_meter
 
       if capacity = @available_water_capacity.in_liter_per_square_meter and sets = crop_sets.map(&:name).map(&:to_s)
-        if @variety && @variety <= :brassica_napus && plant_growth_indicator = @cultivation.density(:fresh_mass, :net_surface_area).to_d(:kilogram_per_hectare)
+        if @variety_nomen && @variety_nomen <= :brassica_napus && plant_growth_indicator = @cultivation.density(:fresh_mass, :net_surface_area).to_d(:kilogram_per_hectare)
 
           if plant_growth_indicator <= 0.4
             plant_growth = 'low'
@@ -540,7 +567,7 @@ module Manuring
             item.plant_developpment == plant_growth.to_s && sets.include?(item.crop.to_s) && (item.precipitations_min.in_liter_per_square_meter <= water_falls && water_falls < item.precipitations_max.in_liter_per_square_meter)
           end
 
-        elsif @variety
+        elsif @variety_nomen
 
           items = Manuring::Abaci::NmpPoitouCharentesAbacusTenRow.select do |item|
             (item.minimum_available_water_capacity.in_liter_per_square_meter <= capacity && capacity < item.maximum_available_water_capacity.in_liter_per_square_meter) && sets.include?(item.crop.to_s) && (item.precipitations_min.in_liter_per_square_meter <= water_falls && water_falls < item.precipitations_max.in_liter_per_square_meter)
@@ -555,10 +582,10 @@ module Manuring
 
     def estimate_maximum_nitrogen_input
       quantity = 170.in_kilogram_per_hectare
-      if department_item = @administrative_area and @variety
-        cultivation_varieties = @variety.self_and_parents
+      if department_item = @administrative_area and @variety_nomen
+        cultivation_varieties = @variety_nomen.self_and_parents
         items = Manuring::Abaci::NmpFranceCultivationNitrogenInputMaxima.select do |i|
-          @variety <= i.cultivation_variety && i.administrative_area.to_s == department_item.parent_area.to_s
+          @variety_nomen <= i.cultivation_variety && i.administrative_area.to_s == department_item.parent_area.to_s
         end
         if items.any?
           quantity = items.first.maximum_nitrogen_input.in_kilogram_per_hectare

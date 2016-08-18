@@ -4,17 +4,19 @@ module Manuring
 
       def initialize(application)
         super(application)
-        @variety = Nomen::Variety[manure_management_plan_zone.cultivation_variety]
-        @soil_nature = Nomen::SoilNature[manure_management_plan_zone.soil_nature] 
+        @variety = manure_management_plan_zone.cultivation_variety
+        @variety_nomen = Nomen::Variety[manure_management_plan_zone.cultivation_variety]
+        @soil_nature = manure_management_plan_zone.soil_nature
+        @soil_nature_nomen = Nomen::SoilNature[manure_management_plan_zone.soil_nature]
         @administrative_area = manure_management_plan_zone.administrative_area
-        @available_water_capacity = 0
+        @available_water_capacity = 85 #params[:available_water_capacity] || 85
         @irrigated = manure_management_plan_zone.irrigated
         @campaign = manure_management_plan_zone.campaign
         @zone = manure_management_plan_zone
         @activity_production = manure_management_plan_zone.activity_production
         @cultivation = manure_management_plan_zone.activity_production.current_cultivation
         @opened_at = manure_management_plan_zone.opened_at
-        @mineral_nitrogen_at_opening = 0.0
+        @mineral_nitrogen_at_opening = 3 #params[:mineral_nitrogen_in_soil_at_opening] || 0.0
         @targets = Product.where(id: manure_management_plan_zone.activity_production.distributions.pluck(:target_id))
         # for animal balance
         @milk_annual_production_from_all_adult_female_cow = manure_management_plan_zone.plan.milk_annual_production_in_liter
@@ -22,10 +24,10 @@ module Manuring
       end
       
       def crop_sets
-        return [] unless @variety
+        return [] unless @variety_nomen
         @crop_sets ||= Nomen::CropSets.list.select do |i|
           i.varieties.detect do |v|
-            @variety <= v
+            @variety_nomen <= v
           end
         end
         return @crop_sets
