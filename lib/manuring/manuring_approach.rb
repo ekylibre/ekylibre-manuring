@@ -4,15 +4,10 @@ module Manuring
 
       def initialize(application)
         super(application)
-<<<<<<< HEAD
-        @variety = Nomen::Variety[manure_management_plan_zone.cultivation_variety]
-        @soil_nature = Nomen::SoilNature[manure_management_plan_zone.soil_nature]
-=======
         @variety = manure_management_plan_zone.cultivation_variety
         @variety_nomen = Nomen::Variety[manure_management_plan_zone.cultivation_variety]
         @soil_nature = manure_management_plan_zone.soil_nature
         @soil_nature_nomen = Nomen::SoilNature[manure_management_plan_zone.soil_nature]
->>>>>>> 50a3cf145270dfbdf2e0390226dd89268118c220
         @administrative_area = manure_management_plan_zone.administrative_area
         @available_water_capacity = parameters[:available_water_capacity] || 0
         @average_precipitation_between_october_and_march = parameters[:average_precipitation_between_october_and_march] || 350
