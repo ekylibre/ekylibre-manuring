@@ -3,18 +3,18 @@
 # require 'calculus/manure_management_plan/external'
 
 module Manuring
-  class PoitouCharentes2014 < ManuringApproach
-    
+  class PoitouCharentes2014 < Manuring::ManuringApproach
+
     # http://www.poitou-charentes.developpement-durable.gouv.fr
     # Arrété 149/SGAR/2014 du 23/05/2014
-    
+
     # Estimate "Pf"
     def estimated_needs(expected_yield = nil)
-      
+
       # y
       expected_yield = estimate_expected_yield if expected_yield.nil?
       expected_yield ||= 0
-      
+
       if @variety
         items = Manuring::Abaci::NmpPoitouCharentesAbacusThree2014Row.select do |i|
           @variety <= i.cultivation_variety &&
@@ -41,24 +41,24 @@ module Manuring
       # end
       expected_yield.in_kilogram_per_hectare * b / 100.0.to_d
     end
-    
+
     # Estimate "S" soil_supply
     def soil_supplies
       values = estimated_supply
-      
+
       # S
       s = 0.in_kilogram_per_hectare
 
       sets = crop_sets.map(&:name).map(&:to_s)
-      
+
       # Céréales, Tournesol, Lin, Chanvre, Colza, Tabac et Portes graines
       if @variety && (@variety <= :poaceae || @variety <= :brassicaceae || @variety <= :medicago || @variety <= :helianthus || @variety <= :nicotiana || @variety <= :linum)
         # Si Type de sol est Argilo-calcaire ou terres rouges à châtaigniers
         if @soil_nature.include?(Nomen::SoilNature[:clay_limestone_soil]) || @soil_nature.include?(Nomen::SoilNature[:chesnut_red_soil]) and @variety and @variety > :nicotiana
-          
+
           # S = Po + Mr + MrCi
           s = values[:soil_production] + values[:previous_cultivation_residue_mineralization] + values[:intermediate_cultivation_residue_mineralization]
-                                       
+
         else
           # S = Pi + Ri + Mh + Mhp + Mr + MrCi + Rf
           s = values[:absorbed_nitrogen_at_opening] + values[:mineral_nitrogen_at_opening] + values[:humus_mineralization] +
@@ -70,7 +70,7 @@ module Manuring
       return s
 
     end
-    
+
     # compute all supply parameters
     def estimated_supply
       values = {}
@@ -107,28 +107,28 @@ module Manuring
 
       # Xmax
       values[:maximum_nitrogen_input] = estimate_maximum_nitrogen_input
-      
+
       return values
     end
 
     def estimated_input(values = {})
-      
+
       values = estimated_supply
-      
+
       # X
       input = 0.in_kilogram_per_hectare
       # C
       c = estimated_needs - soil_supplies
 
       sets = crop_sets.map(&:name).map(&:to_s)
-      
+
       # Céréales, Tournesol, Lin, Chanvre, Colza, Tabac et Portes graines
       if @variety && (@variety <= :poaceae || @variety <= :brassicaceae || @variety <= :medicago || @variety <= :helianthus || @variety <= :nicotiana || @variety <= :linum)
         # Si Type de sol est Argilo-calcaire ou terres rouges à châtaigniers
         if @soil_nature.include?(Nomen::SoilNature[:clay_limestone_soil]) || @soil_nature.include?(Nomen::SoilNature[:chesnut_red_soil]) and @variety and @variety > :nicotiana
           # CAU = 0.8
           # X = [(Pf - Po - Mr - MrCi - Nirr) / CAU] - Xa
-          # 
+          #
           # X = [(C - Nirr) / CAU] - Xa
           fertilizer_apparent_use_coeffient = 0.8.to_d
           input = (((c - values[:irrigation_water_nitrogen]) / fertilizer_apparent_use_coeffient) - values[:organic_fertilizer_mineral_fraction])
@@ -152,7 +152,7 @@ module Manuring
       if input.to_d < 0.0
         input = 0.in_kilogram_per_hectare
       end
-      
+
       # if input between 0 and 30 then 30
       if input.to_d > 0.0 && input.to_d <= 30.0
         input = 30.in_kilogram_per_hectare
@@ -165,15 +165,15 @@ module Manuring
 
       return input
     end
-    
-    
+
+
     # Estimate "y"
     def estimate_expected_yield
       cultivation_varieties = (@variety ? @variety.self_and_parents : :undefined)
       # TODO
       # 1 / Calcul des références disponibles sur l'exploitation (au moins de cinq valeurs pour une condition de sol et de culture)
       # Moyenne des interventions de récolte sur les 5 dernières années
-      
+
       # 2 / Référence par type de sol (Céréales)
       if capacity = @available_water_capacity.in_liter_per_square_meter and items = Manuring::Abaci::NmpPoitouCharentesAbacusTwoRow.where(cultivation_variety: cultivation_varieties, soil_nature: @soil_nature) and items = items.select { |i| i.minimum_available_water_capacity.in_liter_per_square_meter <= capacity && capacity < i.maximum_available_water_capacity.in_liter_per_square_meter } and items.any?
         # puts items.inspect.green
@@ -198,7 +198,7 @@ module Manuring
       return expected_yield
     end
 
-    
+
 
     # Estimate "Pi"
     def estimate_absorbed_nitrogen_at_opening
@@ -252,7 +252,7 @@ module Manuring
         if items.any?
           # frequence d'apport de la matière organique
           organic_input_frequency = :without_organic_matter
-            
+
             organic_fertilization_interventions = []
             for c in campaigns
               for target in @targets
@@ -260,7 +260,7 @@ module Manuring
               end
             end
             ip = organic_fertilization_interventions.count
-            if ip >= 3 
+            if ip >= 3
               organic_input_frequency = :three_years_organic_matter_frequency
             elsif ip >= 2
               organic_input_frequency = :three_to_five_years_organic_matter_frequency
