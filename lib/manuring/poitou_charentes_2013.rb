@@ -4,12 +4,12 @@
 
 module Manuring
   class PoitouCharentes2013 < ManuringApproach
-    
+
     def estimated_needs(expected_yield = nil)
-      
+
       # Estimate "Pf"
       expected_yield = estimate_expected_yield if expected_yield.nil?
-      
+
       b = 3
       if @variety
         items = Manuring::Abaci::NmpPoitouCharentesAbacusThreeRow.select do |i|
@@ -29,9 +29,9 @@ module Manuring
       #   b = items.first.coefficient
       # end
       expected_yield.in_kilogram_per_hectare * b / 100.0.to_d
-      
+
     end
-    
+
     # compute all supply parameters
     def estimated_supply
       values = {}
@@ -68,19 +68,19 @@ module Manuring
 
       # Xmax
       values[:maximum_nitrogen_input] = estimate_maximum_nitrogen_input
-      
+
       return values
     end
 
     def estimated_input(values = {})
-      
+
       values = estimated_supply
-      
+
       # X
       input = 0.in_kilogram_per_hectare
 
       sets = crop_sets.map(&:name).map(&:to_s)
-      
+
       # Céréales, Tournesol, Lin, Chanvre, Colza, Tabac et Portes graines
       if @variety && (@variety <= :poaceae || @variety <= :brassicaceae || @variety <= :medicago || @variety <= :helianthus || @variety <= :nicotiana || @variety <= :linum)
         # Si Type de sol est Argilo-calcaire ou terres rouges à châtaigniers
@@ -134,8 +134,8 @@ module Manuring
 
       return input
     end
-    
-    
+
+
     # Estimate "y"
     def estimate_expected_yield
       puts 'PC 2013 ESTIMATE YIELD'.inspect.red
@@ -166,7 +166,7 @@ module Manuring
       expected_yield
     end
 
-    
+
 
     # Estimate "Pi"
     def estimate_absorbed_nitrogen_at_opening
@@ -219,7 +219,7 @@ module Manuring
           # if there are animal's activities on farm in campaign
           if Activity.of_campaign(campaigns).of_families(:animal_farming).any?
             # if animals moved on cultivable_zones in previous campaign then :husbandry_with_mixed_crop else :husbandry
-            
+
             pasturing_interventions = []
             for c in campaigns
              pasturing_interventions << Intervention.of_campaign(c).of_nature(:pasturing)
