@@ -14,14 +14,15 @@ module Manuring
         @soil_nature_nomen = Nomen::SoilNature[manure_management_plan_zone.soil_nature]
 >>>>>>> 50a3cf145270dfbdf2e0390226dd89268118c220
         @administrative_area = manure_management_plan_zone.administrative_area
-        @available_water_capacity = 85 #params[:available_water_capacity] || 85
+        @available_water_capacity = parameters[:available_water_capacity] || 0
+        @average_precipitation_between_october_and_march = parameters[:average_precipitation_between_october_and_march] || 350
         @irrigated = manure_management_plan_zone.irrigated
         @campaign = manure_management_plan_zone.campaign
         @zone = manure_management_plan_zone
         @activity_production = manure_management_plan_zone.activity_production
         @cultivation = manure_management_plan_zone.activity_production.current_cultivation
         @opened_at = manure_management_plan_zone.opened_at
-        @mineral_nitrogen_at_opening = 3 #params[:mineral_nitrogen_in_soil_at_opening] || 0.0
+        @mineral_nitrogen_at_opening = parameters[:mineral_nitrogen_in_soil_at_opening] || 0.0
         @targets = Product.where(id: manure_management_plan_zone.activity_production.distributions.pluck(:target_id))
         # for animal balance
         @milk_annual_production_from_all_adult_female_cow = manure_management_plan_zone.plan.milk_annual_production_in_liter
