@@ -6,6 +6,9 @@ version "0.0.0"
 app '>= 1.1.0', '< 3.0.0'
 
 add_theme_stylesheet "*", "manure_map"
+add_theme_stylesheet "*", "accordion"
+
 
 require_javascript "manure_management"
 require_javascript "map_editor_accordion"
+require_javascript "manure_management_results"

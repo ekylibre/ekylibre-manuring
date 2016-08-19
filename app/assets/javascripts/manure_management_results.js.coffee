@@ -8,8 +8,11 @@
       map = $el.mapeditor 'get_map'
 
     $el.on 'mapchange', ->
+      console.log('mapchage')
 
     $el.on 'mapeditor:serie_feature_add', (e, feature) ->
+      if feature.properties.accordion
+        $el.mapeditoraccordion 'insert', feature
 
     $el.on 'mapeditoraccordion:feature_select', (e, shape) ->
 
