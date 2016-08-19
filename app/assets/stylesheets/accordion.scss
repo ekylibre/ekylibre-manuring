@@ -1,0 +1,59 @@
+@import "bootstrap/list-group";
+@import "bootstrap/panels";
+@import "bootstrap/labels";
+
+.accordion {
+  float: left;
+  overflow-y: auto;
+  @include gradient-vertical(mix($desktop-background, $action-menu-background), $action-menu-background);
+  @include box-sizing(border-box);
+  .item {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    background-color: $action-menu-background;
+    border: $row-border;
+    color: $text-color;
+    cursor: pointer;
+    @include clearfix;
+    &:hover {
+      background-color: $hover-mask;
+    }
+    &.updated {
+      color: $action-menu-background;
+      background-color: mix($success-color, $action-menu-background);
+      @include transition(all 0.6s ease);
+    }
+    &.removed {
+      color: $action-menu-background;
+      background-color: mix($invalid-color, $action-menu-background);
+      @include transition(all 0.6s ease);
+    }
+
+    .label {
+      @include inline-block;
+    }
+
+    .actions {
+      @include inline-block;
+      @include float(right);
+      button.close {
+        @include is-icon;
+        @include use-icon(clear);
+        border: none;
+        color: $active-color;
+        background: transparent;
+        width: $lh-normal;
+        text-align: center;
+        cursor: pointer;
+        margin-left: 10px;
+      }
+    }
+
+    .item-label {
+      line-height: 29px;
+    }
+
+  }
+}
