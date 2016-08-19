@@ -1,0 +1,7 @@
+eng:
+  MMP:
+
+    approach:
+      question:
+        is_in_vulnerable_zone: "is in vulnerable zone"
+      result:
