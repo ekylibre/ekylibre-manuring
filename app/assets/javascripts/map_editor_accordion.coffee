@@ -33,22 +33,20 @@
 
       html ="<div class='accordion-data'>#{group_element_key}"
       for group_element_key of data
+        console.log(group_element_key)
         "<div class='accordion-data-group'>#{group_element_key}"
         for element_key of data[group_element_key]
           element = data[group_element_key][element_key]
-          if !element
-            console.log(group_element_key)
-            console.log(element_key)
-            console.log(data[group_element_key])
-          html += "<div class='item-data'>"
-          html += "<div class='item-data-label'>#{element_key}</div>"
-          if element.value
-            html += "<div class='item-data-value'>#{element.value}</div>"
-          else
-            html += "<div class='item-data-value'>#{element}</div>"
-          if element.unit
-            html += "<div class='item-data-unit'>#{element.unit}</div>"
-          html += "</div>"
+          if element
+            html += "<div class='item-data'>"
+            html += "<div class='item-data-label'>#{element_key}</div>"
+            if element.value
+              html += "<div class='item-data-value'>#{element.value}</div>"
+            else
+              html += "<div class='item-data-value'>#{element}</div>"
+            if element.unit
+              html += "<div class='item-data-unit'>#{element.unit}</div>"
+            html += "</div>"
         html += "</div>"
       html += "</div>"
       return html
