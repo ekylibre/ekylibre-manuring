@@ -1,0 +1,136 @@
+name,label,crop R(crop_sets),input_method,input_age_min_in_month I,input_age_max_in_month I,input_period_start,input_period_stop,keq D,variant R(product_nature_variants)
+carbonnate_compost_on_spring_straw_cereal_during_spring,Compost MIATE avec support carbonaté de 6 mois et plus,spring_crop,,6,120,3,6,,urban_compost
+carbonnate_compost_on_autumn_cropl_during_winter,Compost MIATE  avec support carbonaté de 6 mois et plus,autumn_crop,,6,120,9,12,,urban_compost
+green_compost_on_spring_straw_cereal_during_spring,Compost de déchets verts de plus de 6 mois,spring_crop,,6,120,3,6,0.1,green_compost
+green_compost_on_spring_straw_cereal_during_autum,Compost de déchets verts de plus de 6 mois,spring_straw_cereal,,6,120,9,12,0.1,green_compost
+green_compost_on_spring_straw_cereal_during_summer,Compost de déchets verts de plus de 6 mois,spring_straw_cereal,,6,120,6,9,0.1,green_compost
+green_compost_on_autumn_crop_during_summer,Compost de déchets verts de plus de 6 mois,autumn_crop,,6,120,8,9,0.05,green_compost
+green_compost_on_autumn_crop_during_autumn,Compost de déchets verts de plus de 6 mois,autumn_crop,,6,120,9,12,0.05,green_compost
+new_green_compost_on_autumn_crop_during_autumn,Compost de déchets verts de moins de 6 mois,autumn_crop,,0,6,9,12,0.0,green_compost
+urban_compost_on_spring_straw_cereal_during_spring,Compost d’ordures ménagères résiduelles (par TMB),spring_crop,,0,120,3,6,0.1,urban_compost
+urban_compost_on_autumn_crop_during_autumn,Compost d’ordures ménagères résiduelles (par TMB),autumn_crop,,0,120,9,12,0.05,urban_compost
+anaerobic_digestion_digestate_on_spring_straw_cereal_during_spring_by_top,Digestats bruts,spring_crop,on_top,0,120,3,6,0.5,anaerobic_digestion_digestate
+anaerobic_digestion_digestate_on_spring_straw_cereal_during_spring_by_injection,Digestats bruts,spring_straw_cereal,injection,0,120,3,6,0.9,anaerobic_digestion_digestate
+anaerobic_digestion_digestate_on_autumn_crop_during_spring,Digestats bruts,autumn_crop,,0,120,3,6,0.8,anaerobic_digestion_digestate
+anaerobic_digestion_digestate_on_rape_during_spring,Digestats bruts,rape,,0,120,3,6,0.65,anaerobic_digestion_digestate
+liquid_anaerobic_digestion_digestate_on_spring_straw_cereal_during_spring,Fraction liquide après séparation de phase,spring_crop,,0,120,3,6,0.7,anaerobic_digestion_digestate
+dry_anaerobic_digestion_digestate_on_spring_straw_cereal_during_spring,Fraction sèche après séparation de phase,spring_crop,,0,120,3,6,0.3,anaerobic_digestion_digestate
+activated_sludge_on_spring_straw_cereal_during_spring_01,"Boues activées liquides IAA (C/N = 4,4)",spring_crop,,0,120,3,6,0.5,activated_sludge
+activated_sludge_on_spring_straw_cereal_during_spring_02,"Boues activées liquides égouttées IAA (C/N = 4,4)",spring_crop,,0,120,3,6,0.5,activated_sludge
+activated_sludge_on_spring_straw_cereal_during_spring_03,"Boues activées liquides urbaines (C/N = 4,9)",spring_crop,,0,120,3,6,0.45,activated_sludge
+activated_sludge_on_spring_straw_cereal_during_spring_04,"Boues activées liquides égouttées urbaines (C/N = 4,9)",spring_crop,,0,120,3,6,0.45,activated_sludge
+activated_sludge_on_spring_straw_cereal_during_spring_05,"Boues activées filtre presse non chaulées (C/N = 5,9)",spring_crop,,0,120,3,6,0.45,activated_sludge
+activated_sludge_on_spring_straw_cereal_during_spring_06,"Boues activées pâteuses filtre à bandes (C/N = 5,2)",spring_crop,,0,120,3,6,0.4,activated_sludge
+activated_sludge_on_spring_straw_cereal_during_spring_07,"Boues activées lits de séchage (C/N = 5,4)",spring_crop,,0,120,3,6,0.4,activated_sludge
+activated_sludge_on_spring_straw_cereal_during_spring_08,"Boues activées lits à rhizophytes (C/N =5,9)",spring_crop,,0,120,3,6,0.4,activated_sludge
+activated_sludge_on_spring_straw_cereal_during_spring_09,"Boues activées déshydratées chaulées (C/N = 5,3)",spring_crop,,0,120,3,6,0.35,activated_sludge
+activated_sludge_on_spring_straw_cereal_during_spring_10,Boues activées séchées (C/N = 6),spring_crop,,0,120,3,6,0.35,activated_sludge
+digestate_sludge_on_spring_straw_cereal_during_spring_01,"Boues digérées anaérobies liquides IAA (C/N = 4,2)",spring_crop,,0,120,3,6,0.5,digestate_sludge
+digestate_sludge_on_spring_straw_cereal_during_spring_02,"Boues digérées anaérobies déshydratées (C/N = 5,9)",spring_crop,,0,120,3,6,0.4,digestate_sludge
+digestate_sludge_on_spring_straw_cereal_during_spring_03,Boues digérées anaérobies déshydratées chaulées (C/N = 6),spring_crop,,0,120,3,6,0.4,digestate_sludge
+digestate_sludge_on_spring_straw_cereal_during_spring_04,"Boues digérées anaérobies sèchées (C/N = 6,1)",spring_crop,,0,120,3,6,0.3,digestate_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_01,"Boues lit bactérien/disque bio liquides (C/N = 7,5)",spring_crop,,0,120,3,6,0.3,mixed_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_02,Boues lit bactérien déshydratées chaulées (C/N = 5),spring_crop,,0,120,3,6,0.3,mixed_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_03,"Boues décanteur digesteur (C/N = 8,1)",spring_crop,,0,120,3,6,0.3,mixed_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_04,Boues décanteur (C/N = 6 à 9),spring_crop,,0,120,3,6,0.3,mixed_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_05,Boues de curage de lagunes urbaines (C/N = 6 à 11),spring_crop,,0,120,3,6,0.3,mixed_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_06,"Boues physicochimiques déshydratées (C/N = 5,5 à 17)",spring_crop,,0,120,3,6,0.25,mixed_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_07,Boues physico-chimiques déshydratées chaulées (C/N = 10 à 13),spring_crop,,0,120,3,6,0.25,mixed_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_08,Boues digérées traitées Thermiquement,spring_crop,,0,120,3,6,0.15,mixed_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_09,"Compost de boues (C/N = 11,8)",spring_crop,,0,120,3,6,0.15,digestate_compost
+mixed_sludge_on_spring_straw_cereal_during_spring_10,"Matières de vidange (C/N = 11,8)",spring_crop,,0,120,3,6,0.35,mixed_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_11,Boues mixtes papetières C/N<15,spring_crop,,0,120,3,6,0.2,mixed_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_12,Boues mixtes papetières 15<C/N<20,spring_crop,,0,120,3,6,0.1,mixed_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_13,Boues mixtes papetières 20<C/N<35,spring_crop,,0,120,3,6,0.0,mixed_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_14,Boues mixtes papetières,spring_crop,,0,120,3,6,0.3,mixed_sludge
+mixed_sludge_on_spring_straw_cereal_during_spring_15,Boues de désencrage 40<C/N<70,spring_crop,,0,120,3,6,0.3,mixed_sludge
+new_pig_compost_on_spring_straw_cereal_during_summer,Compost de fumier de porcs et de lisier de porcs + paille (Guernevez),spring_crop,,0,6,3,6,0.45,pig_compost
+new_pig_compost_on_rapel_during_summer,Compost de fumier de porcs et de lisier de porcs + paille (Guernevez),rape,,0,6,8,9,0.2,pig_compost
+new_pig_compost_on_spring_straw_cereal_during_summer,Compost de fumier de porcs et de lisier de porcs + paille (Guernevez),autumn_crop,,0,6,9,12,0.05,pig_compost
+pig_compost_on_spring_straw_cereal_during_summer,Compost de fumier de porcs et de lisier de porcs + paille (Guernevez),spring_crop,,6,10,3,6,0.25,pig_compost
+pig_compost_on_rape_during_summer,Compost de fumier de porcs et de lisier de porcs + paille (Guernevez),rape,,6,10,3,6,0.1,pig_compost
+horse_manure_on_spring_straw_cereal_during_summer,Fumier de cheval,spring_crop,,0,120,6,9,0.2,horse_manure
+horse_manure_on_spring_straw_cereal_during_spring,Fumier de cheval,spring_crop,,0,120,3,6,0.2,horse_manure
+horse_manure_on_rape_during_summer,Fumier de cheval,rape,,0,120,7,9,0.1,horse_manure
+horse_manure_on_autumn_crop_during_winter,Fumier de cheval,autumn_crop,,0,120,9,12,0.1,horse_manure
+ovis_manure_on_spring_straw_cereal_during_summer,Fumier d’ovins,spring_crop,,0,120,6,9,0.15,ovis_manure
+ovis_manure_on_spring_straw_cereal_during_spring,Fumier d’ovins,spring_crop,,0,120,3,6,0.2,ovis_manure
+ovis_manure_on_rape_during_summer,Fumier d’ovins,rape,,0,120,7,9,0.1,ovis_manure
+ovis_manure_on_autumn_crop_during_winter,Fumier d’ovins,autumn_crop,,0,120,9,12,0.1,ovis_manure
+capra_manure_on_spring_straw_cereal_during_summer,Fumier de caprins,spring_crop,,0,120,6,9,0.15,capra_manure
+capra_manure_on_spring_straw_cereal_during_spring,Fumier de caprins,spring_crop,,0,120,3,6,0.2,capra_manure
+capra_manure_on_rape_during_summer,Fumier de caprins,rape,,0,120,7,9,0.1,capra_manure
+capra_manure_on_autumn_crop_during_winter,Fumier de caprins,autumn_crop,,0,120,9,12,0.1,capra_manure
+sus_manure_on_spring_straw_cereal_during_spring,Fumier de porcs,spring_crop,,0,120,3,6,0.45,pig_manure
+sus_manure_on_spring_straw_cereal_during_autumn,Fumier de porcs,spring_crop,,0,120,9,12,0.15,pig_manure
+sus_manure_on_spring_straw_cereal_during_summer,Fumier de porcs,spring_crop,,0,120,6,9,0.15,pig_manure
+sus_manure_on_rape_during_summer,Fumier de porcs,rape,,0,120,6,9,0.1,pig_manure
+sus_manure_on_rape_during_spring,Fumier de porcs,rape,,0,120,3,6,0.15,pig_manure
+sus_manure_on_autumn_crop_during_spring,Fumier de porcs,autumn_crop,,0,120,3,6,0.2,pig_manure
+sus_manure_on_autumn_crop_during_autumn,Fumier de porcs,autumn_crop,,0,120,9,12,0.1,pig_manure
+straw_cattle_manure_on_spring_straw_cereal_during_spring,Fumier de bovin pailleux,spring_crop,,0,120,3,6,0.25,cattle_manure
+straw_cattle_manure_on_spring_straw_cereal_during_autumn,Fumier de bovin pailleux,spring_crop,,0,120,9,12,0.1,cattle_manure
+straw_cattle_manure_on_spring_straw_cereal_during_summer,Fumier de bovin pailleux,spring_crop,,0,120,6,9,0.1,cattle_manure
+straw_cattle_manure_on_rape_during_summer,Fumier de bovin pailleux,rape,,0,120,6,9,0.1,cattle_manure
+straw_cattle_manure_on_autumn_crop_during_winter,Fumier de bovin pailleux,autumn_crop,,0,120,9,12,0.1,cattle_manure
+cattle_manure_on_spring_straw_cereal_during_spring,Fumier de bovin décomposé,spring_crop,,0,120,3,6,0.3,cattle_manure
+cattle_manure_on_spring_straw_cereal_during_autumn,Fumier de bovin décomposé,spring_crop,,0,120,9,12,0.1,cattle_manure
+cattle_manure_on_spring_straw_cereal_during_summer,Fumier de bovin décomposé,spring_crop,,0,120,6,9,0.2,cattle_manure
+cattle_manure_on_rape_during_summer,Fumier de bovin décomposé,rape,,0,120,6,9,0.1,cattle_manure
+cattle_manure_on_autumn_crop_during_winter,Fumier de bovin décomposé,autumn_crop,,0,120,9,12,0.1,cattle_manure
+poultry_guano_on_spring_straw_cereal_during_spring_01,Fientes de volaille avec litière avec incorporation immédiate,spring_crop,,0,120,3,6,0.6,poultry_guano
+poultry_guano_on_rape_during_summer_01,Fientes de volaille avec litière avec incorporation immédiate,rape,,0,120,7,9,0.2,poultry_guano
+poultry_guano_on_autumn_crop_during_autumn_01,Fientes de volaille avec litière avec incorporation immédiate,autumn_crop,,0,120,9,12,0.1,poultry_guano
+poultry_guano_on_spring_straw_cereal_during_spring_02,Fientes de volaille avec litière avec incorporation dans les 24H,spring_crop,,0,120,3,6,0.5,poultry_guano
+poultry_guano_on_rape_during_summer_02,Fientes de volaille avec litière avec incorporation dans les 24H,rape,,0,120,7,9,0.17,poultry_guano
+poultry_guano_on_autumn_crop_during_autumn_02,Fientes de volaille avec litière avec incorporation dans les 24H,autumn_crop,,0,120,9,12,0.1,poultry_guano
+poultry_guano_on_rape_during_summer_03,Fientes de volaille avec litière avec apport en végétation,rape,,0,120,3,6,0.45,poultry_guano
+poultry_guano_on_autumn_crop_during_autumn_03,Fientes de volaille avec litière avec apport en végétation,autumn_crop,,0,120,3,6,0.45,poultry_guano
+new_cattle_compost_on_spring_straw_cereal_during_autumn,Composts de fumiers de bovins jeune de moins de 6 mois,spring_crop,,0,6,3,6,0.2,cattle_compost
+new_cattle_compost_on_rape_during_summer,Composts de fumiers de bovins jeune de moins de 6 mois,rape,,0,6,7,9,0.12,cattle_compost
+new_cattle_compost_on_autumn_crop_during_autumn,Composts de fumiers de bovins jeune de moins de 6 mois,autumn_crop,,0,6,9,12,0.05,cattle_compost
+old_cattle_compost_on_spring_straw_cereal_during_spring,Composts de fumiers de bovins vieux de plus de 6 mois,spring_crop,,6,120,3,6,0.1,cattle_compost
+old_cattle_compost_on_spring_straw_cereal_during_summer,Composts de fumiers de bovins vieux de plus de 6 mois,spring_crop,,6,120,9,12,0.15,cattle_compost
+old_cattle_compost_on_spring_straw_cereal_during_autumn,Composts de fumiers de bovins vieux de plus de 6 mois,spring_crop,,6,120,6,9,0.15,cattle_compost
+old_cattle_compost_on_rape_during_summer,Composts de fumiers de bovins vieux de plus de 6 mois,rape,,6,120,7,9,0.1,cattle_compost
+old_cattle_compost_on_autumn_crop_during_autumn,Composts de fumiers de bovins vieux de plus de 6 mois,autumn_crop,,6,120,9,12,0.05,cattle_compost
+new_poultry_compost_on_spring_straw_cereal_during_spring,Compost de fientes de volailles avec litière de moins de 6 mois,spring_crop,,0,6,3,6,,poultry_compost
+new_poultry_compost_on_rape_during_summer,Compost de fientes de volailles avec litière de moins de 6 mois,rape,,0,6,7,9,,poultry_compost
+new_poultry_compost_on_autumn_crop_during_autumn,Compost de fientes de volailles avec litière de moins de 6 mois,autumn_crop,,0,6,9,12,,poultry_compost
+old_poultry_compost_on_spring_straw_cereal_during_spring,Compost de fientes de volailles avec litière de 6 mois à 10 mois,spring_crop,,6,10,3,6,,poultry_compost
+poultry_guano_on_spring_straw_cereal_during_spring_04,Fientes de volaille avec incorporation immédiate,spring_crop,,0,120,3,6,0.65,poultry_guano
+poultry_guano_on_spring_straw_cereal_during_autumn_04,Fientes de volaille avec incorporation immédiate,spring_crop,,0,120,9,12,0.1,poultry_guano
+poultry_guano_on_spring_straw_cereal_during_summer_04,Fientes de volaille avec incorporation immédiate,spring_crop,,0,120,6,9,0.1,poultry_guano
+poultry_guano_on_autumn_crop_during_spring_04,Fientes de volaille avec incorporation immédiate,autumn_crop,,0,120,9,12,0.1,poultry_guano
+poultry_guano_on_spring_straw_cereal_during_spring_05,Fientes de volaille avec incorporation dans les 24H,spring_crop,,0,120,3,6,0.55,poultry_guano
+poultry_guano_on_autumn_crop_during_spring_05,Fientes de volaille avec apport en végétation,autumn_crop,,0,120,3,6,0.45,poultry_guano
+pig_slurry_on_spring_straw_cereal_during_spring_01,Lisier de porc mixte avec incorporation immédiate,spring_crop,,0,120,3,6,0.7,pig_slurry
+pig_slurry_on_spring_straw_cereal_during_autumn_01,Lisier de porc mixte avec incorporation immédiate,spring_crop,,0,120,9,12,0.05,pig_slurry
+pig_slurry_on_spring_straw_cereal_during_summer_01,Lisier de porc mixte avec incorporation immédiate,spring_crop,,0,120,6,9,0.05,pig_slurry
+pig_slurry_on_rape_during_summer_01,Lisier de porc mixte avec incorporation immédiate,rape,,0,120,6,9,0.05,pig_slurry
+pig_slurry_on_autumn_crop_during_autumn_01,Lisier de porc mixte avec incorporation immédiate,autumn_crop,,0,120,9,12,0.05,pig_slurry
+pig_slurry_on_spring_straw_cereal_during_spring_02,Lisier de porc mixte  avec incorporation dans les 24H,spring_crop,,0,120,3,6,0.5,pig_slurry
+pig_slurry_on_spring_straw_cereal_during_autumn_02,Lisier de porc mixte  avec incorporation dans les 24H,spring_crop,,0,120,9,12,0.05,pig_slurry
+pig_slurry_on_spring_straw_cereal_during_summer_02,Lisier de porc mixte  avec incorporation dans les 24H,spring_crop,,0,120,6,9,0.05,pig_slurry
+pig_slurry_on_rape_during_summer_02,Lisier de porc mixte  avec incorporation dans les 24H,rape,,0,120,6,9,0.0,pig_slurry
+pig_slurry_on_autumn_crop_during_autumn_02,Lisier de porc mixte  avec incorporation dans les 24H,autumn_crop,,0,120,9,12,0.05,pig_slurry
+pig_slurry_on_autumn_crop_during_spring_03,Lisier de porc mixte  avec apport en végétation,autumn_crop,,0,120,3,6,0.6,pig_slurry
+pig_slurry_on_rape_during_spring_03,Lisier de porc mixte  avec apport en végétation,rape,,0,120,3,6,0.56,pig_slurry
+cattle_slurry_on_spring_straw_cereal_during_spring_01,Lisier de bovins avec incorporation immédiate,spring_crop,,0,120,3,6,0.65,cattle_slurry
+cattle_slurry_on_spring_straw_cereal_during_autumn_01,Lisier de bovins avec incorporation immédiate,spring_crop,,0,120,9,12,0.1,cattle_slurry
+cattle_slurry_on_spring_straw_cereal_during_summer_01,Lisier de bovins avec incorporation immédiate,spring_crop,,0,120,6,9,0.1,cattle_slurry
+cattle_slurry_on_rape_during_summer_01,Lisier de bovins avec incorporation immédiate,autumn_crop,,0,120,9,12,0.1,cattle_slurry
+cattle_slurry_on_autumn_crop_during_autumn_01,Lisier de bovins avec incorporation immédiate,rape,,0,120,6,9,0.15,cattle_slurry
+cattle_slurry_on_spring_straw_cereal_during_spring_02,Lisier de bovins avec incorporation dans les 24H,spring_crop,,0,120,3,6,0.5,cattle_slurry
+cattle_slurry_on_rape_during_summer_02,Lisier de bovins avec incorporation dans les 24H,rape,,0,120,6,9,0.1,cattle_slurry
+cattle_slurry_on_autumn_crop_during_spring_03,Lisier de bovins avec apport en végétation,autumn_crop,,0,120,3,6,0.5,cattle_slurry
+cattle_slurry_on_rape_during_spring_03,Lisier de bovins avec apport en végétation,rape,,0,120,3,6,0.4,cattle_slurry
+calf_slurry_on_spring_straw_cereal_during_spring_01,Lisier de veaux avec incorporation immédiate,spring_crop,,0,120,3,6,0.7,calf_slurry
+calf_slurry_on_spring_straw_cereal_during_spring_02,Lisier de veaux avec incorporation dans les 24H,spring_crop,,0,120,3,6,0.5,calf_slurry
+sugar_vinasse_on_spring_straw_cereal_during_spring,Vinasse de betterave concentrée,spring_crop,,0,120,3,6,0.5,sugar_vinasse
+sugar_vinasse_on_beet_during_spring,Vinasse de betterave concentrée,beet,,0,120,3,6,0.65,sugar_vinasse
+sugar_vinasse_on_spring_straw_cereal_during_summer,Vinasse de betterave concentrée,spring_crop,,0,120,6,9,0.1,sugar_vinasse
+sugar_vinasse_on_autumn_crop_during_autumn,Vinasse de betterave concentrée,autumn_crop,,0,120,9,12,0.15,sugar_vinasse
+sugar_vinasse_on_autumn_crop_during_spring,Vinasse de betterave concentrée,autumn_crop,,0,120,3,6,0.45,sugar_vinasse
+sugar_vinasse_on_rape_during_summer,Vinasse de betterave concentrée,rape,,0,120,6,9,0.15,sugar_vinasse
+sugar_vinasse_on_rape_during_spring,Vinasse de betterave concentrée,rape,,0,120,3,6,0.45,sugar_vinasse
