@@ -1,16 +1,17 @@
 #core {
-  .manure_edit{
+  .manure_map_form{
     height: 100%;
-    #face-map {
-      height: 100%;
-        .manure-map {
-          @include float(left);
-          height: 70%;
-        }
-      }
+    .manure-map {
+      @include float(left);
+      height: 70%;
     }
   }
 
+  .manure-results-sub-group {
+    @include padding-left($default-gap);
+    font-size: 50px !important;
+  }
+}
 .action-menu {
   .question-filled {
     color: $action-menu-background;
@@ -18,7 +19,6 @@
     @include transition(all 0.6s ease);
     .item_button {
       @include use-icon(check);
-
     }
   }
 
@@ -49,5 +49,4 @@
       //border: inherit;
     }
   }
-
 }

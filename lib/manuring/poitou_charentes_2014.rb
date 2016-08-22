@@ -11,7 +11,6 @@ module Manuring
 
     # Estimate "Pf"
     def estimated_needs(expected_yield = nil)
-
       # y
       expected_yield = estimate_expected_yield if expected_yield.nil?
       expected_yield ||= 0

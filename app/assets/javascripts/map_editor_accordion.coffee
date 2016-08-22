@@ -19,63 +19,8 @@
 
       widget.element.trigger "mapeditoraccordion:loaded"
 
-
-     simple_data_template: (data) ->
-       html = "<div class='accordion-data'>#{group_element_key}"
-       for element_key of data
-         html += "<div class='item-data'>"
-         html += "<div class='item-data-label'>#{element_key}}</div>"
-         html += "<div class='item-data-value'>#{data[group_element_key][element_key]}}</div>"
-         html += "</div>"
-       html += "</div>"
-
-     group_data_template: (data) ->
-      html ="<div class='accordion-data'>"
-      for group_element_key of data
-        html += "<div class='accordion-data-group'>#{group_element_key}"
-        for element_key of data[group_element_key]
-          element = data[group_element_key][element_key]
-          if element
-            html += "<div class='item-data'>"
-            html += "<div class='item-data-label'>#{element_key}</div>"
-            if element.value
-                html += "<div class='item-data-value'>#{element.value}</div>"
-            else if typeof element == 'object' and !element.value
-              html += "<div class='sub-item-data-group'>"
-              for sub_element_key of element
-                html += "<div class='sub-item-data'>"
-                html += "<div class='item-data-label'>#{sub_element_key}</div>"
-                html += "<div class='item-data-value'>#{element[sub_element_key].value}</div>"
-                if element.unit
-                  html += "<div class='item-data-unit'>#{element.unit}</div>"
-                html += "</div>"
-              html += "</div>"
-            if element.unit
-              html += "<div class='item-data-unit'>#{element.unit}</div>"
-          else
-            html += "<div class='item-data-value'>#{element}</div>"
-
-          html += "</div>"
-      html += "</div>"
-      return html
-
     template: (properties) ->
-
-      html = "<div class='item' data-internal-id='#{properties.internal_id}'>"
-      html += "<div class='actions'>"
-      if @options.button
-        html += "<button type='button' class='item_button'></button>"
-      html += "</div>"
-      html += "<div class='item-label'>#{properties.name || properties.id}</div>"
-
-      if @options.data_group
-        html += @group_data_template(properties[@options.data_path])
-      if @options.data_simple
-        html += @simple_data_template(properties[@options.data_path])
-
-        
-      html += "</div>"
-      $(html)
+      return $($.parseHTML(properties["field_set_template"]))
 
     insert: (geojson) ->
       if geojson.properties?
