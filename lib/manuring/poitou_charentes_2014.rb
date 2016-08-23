@@ -178,13 +178,13 @@ module Manuring
 
       # 2 / Référence par type de sol (Céréales)
       if capacity and cultivation_varieties and (@variety_nomen <= :triticosecale || @variety_nomen <= :triticum_aestivum || @variety_nomen <= :triticum_durum || @variety_nomen <= :hordeum) and @soil_nature and items = Manuring::Abaci::NmpPoitouCharentesAbacusTwoRow.where(cultivation_variety: cultivation_varieties.map(&:name), soil_nature: @soil_nature) and items = items.select { |i| i.minimum_available_water_capacity.in_liter_per_square_meter <= capacity && capacity < i.maximum_available_water_capacity.in_liter_per_square_meter } and items.any?
-        
+
         expected_yield = items.first.expected_yield.in_quintal_per_hectare
         puts "Method 2 for #{@activity_production.name} with #{capacity} capacity and #{expected_yield} yield computed ".inspect.red
-        
+
       # 3 / Référence par département (Avoine, Seigle et Mélange de céréales)
       elsif cultivation_varieties and @administrative_area and items = Manuring::Abaci::NmpFranceCultivationYield.where(cultivation_variety: cultivation_varieties.map(&:name), administrative_area: @administrative_area) and (@variety_nomen <= :avena || @variety_nomen <= :secale || @variety_nomen <= :poaceae) and items.any?
-        
+
         expected_yield = items.first.expected_yield.in_quintal_per_hectare
         puts "Method 3 for #{@activity_production.name} with #{expected_yield} yield computed ".inspect.red
       # 4 / Si aucuns des cas, receuil de la valeur saisie dans le budget

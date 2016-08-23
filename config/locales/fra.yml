@@ -3,4 +3,7 @@ fra:
     approach:
       question:
         is_in_vulnerable_zone: "Est en zone vulnérable"
+        mineral_nitrogen_in_soil_at_opening: "Quantité d’azote minéral dans le sol à l’ouverture du bilan"
       result:
+        needs: "Besoins"
+        input: "Apport"

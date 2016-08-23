@@ -5,3 +5,4 @@ eng:
       question:
         is_in_vulnerable_zone: "is in vulnerable zone"
       result:
+        needs: "needs"

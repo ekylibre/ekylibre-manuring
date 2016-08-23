@@ -11,6 +11,20 @@
     @include padding-left($default-gap);
     font-size: 50px !important;
   }
+
+  .manure_card_ratio{
+    width: 10%;
+    text-align: right;
+  }
+}
+
+.manure-accordion {
+  .fieldset-legend {
+    display: flex;
+  }
+  .title{
+    width: 100%;
+  }
 }
 .action-menu {
   .question-filled {

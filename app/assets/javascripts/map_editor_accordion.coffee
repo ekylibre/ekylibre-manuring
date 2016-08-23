@@ -9,7 +9,6 @@
       customClass: ''
 
     _create: ->
-
       $.extend(true, @options, @element.data("accordion"))
 
       @$accordion = $('<div>', class: "accordion #{this.options.customClass}").insertAfter(@element)
@@ -22,12 +21,13 @@
     template: (properties) ->
       return $($.parseHTML(properties["field_set_template"]))
 
-    insert: (geojson) ->
-      if geojson.properties?
-        $render = @template(geojson.properties)
+    insert: (feature) ->
+      if feature.properties?
+        $render = @template feature.properties
         @$accordion.append $render
         $render.on 'click', (e) =>
-          $(@element).trigger('mapeditoraccordion:feature_select',e.currentTarget)
+          $(@element).trigger 'mapeditoraccordion:feature_select',e.currentTarget
+        $(@element).trigger 'mapeditoraccordion:feature_inserted', feature
 
     update: (geojson) ->
       if geojson.properties?

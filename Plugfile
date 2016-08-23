@@ -11,4 +11,5 @@ add_theme_stylesheet "*", "accordion"
 
 require_javascript "manure_management"
 require_javascript "map_editor_accordion"
+require_javascript "manure_intervention_menu"
 require_javascript "manure_management_results"

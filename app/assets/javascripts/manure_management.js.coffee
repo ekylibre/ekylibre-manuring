@@ -5,7 +5,6 @@
 
     $el = $('input.manuring_step_form[data-map-editor]')
 
-
     updateMap = () ->
       if $el.is(':ui-mapeditor')
         newShapes = JSON.parse $el.val()
