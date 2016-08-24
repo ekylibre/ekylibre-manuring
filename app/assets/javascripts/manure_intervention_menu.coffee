@@ -11,7 +11,7 @@
     _create: ->
       $.extend(true, @options, @element.data("intervention-menu"))
 
-      @$intervention_menu = $('.intervention_menu').append($($.parseHTML(@options.template)))
+      @$intervention_menu = $('.intervention_menu')
       widget = this
       @_resize()
 
