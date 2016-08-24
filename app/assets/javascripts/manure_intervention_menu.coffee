@@ -11,9 +11,8 @@
     _create: ->
       $.extend(true, @options, @element.data("intervention-menu"))
 
-      @$intervention_menu= $('<div>', class: "intervention_menu #{this.options.customClass}").insertAfter(@element)
+      @$intervention_menu = $('.intervention_menu').append($($.parseHTML(@options.template)))
       widget = this
-
       @_resize()
 
       widget.element.trigger "intervention_menu:loaded"

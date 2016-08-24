@@ -11,7 +11,7 @@
     _create: ->
       $.extend(true, @options, @element.data("accordion"))
 
-      @$accordion = $('<div>', class: "accordion #{this.options.customClass}").insertAfter(@element)
+      @$accordion = $('<div>', class: "accordion #{this.options.customClass}").insertAfter($(".manure-accordion"))
       widget = this
       @_resize()
       widget.element.trigger "mapeditoraccordion:loaded"
