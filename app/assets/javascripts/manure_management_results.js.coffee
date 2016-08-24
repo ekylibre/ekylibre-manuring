@@ -26,7 +26,6 @@
       $("<a class='manure_card_ratio'> #{quantity} / #{input} </a>").insertAfter($(".fieldset.#{"manure_zone"+zone_id}").find("a.title"))
 
     $el.on 'mapeditor:loaded', ->
-      map = $el.mapeditor 'get_map'
 
     $el.on 'mapchange', ->
 
@@ -35,6 +34,7 @@
         $el.mapeditoraccordion 'insert', feature
 
     $el.on 'mapeditoraccordion:feature_select', (e, feature) ->
+      $el.manureinterventionmenu 'insert', feature
 
     $el.on 'mapeditoraccordion:feature_update', (e, feature, attribute, type) ->
 

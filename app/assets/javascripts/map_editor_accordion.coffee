@@ -13,9 +13,7 @@
 
       @$accordion = $('<div>', class: "accordion #{this.options.customClass}").insertAfter(@element)
       widget = this
-
       @_resize()
-
       widget.element.trigger "mapeditoraccordion:loaded"
 
     template: (properties) ->
@@ -25,9 +23,13 @@
       if feature.properties?
         $render = @template feature.properties
         @$accordion.append $render
-        $render.on 'click', (e) =>
-          $(@element).trigger 'mapeditoraccordion:feature_select',e.currentTarget
-        $(@element).trigger 'mapeditoraccordion:feature_inserted', feature
+        $icon = $render.find('i')
+        $icon.addClass('manure_selected_icon')
+
+        $icon.on 'click', (e) =>
+          e.stopPropagation()
+          $(@element).trigger('mapeditoraccordion:feature_select',feature)
+        $(@element).trigger('mapeditoraccordion:feature_inserted', feature)
 
     update: (geojson) ->
       if geojson.properties?
