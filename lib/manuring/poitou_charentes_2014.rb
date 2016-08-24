@@ -305,7 +305,7 @@ module Manuring
       quantity = 0.in_kilogram_per_hectare
       # get the previous cultivation variety on the current support storage
       previous_variety = nil
-      
+
       for campaign in @campaign.previous.reorder(harvest_year: :desc)
         for activity_production in campaign.activity_productions.where(cultivable_zone_id: @activity_production.cultivable_zone.id)
           # get previous cultivation
@@ -368,15 +368,15 @@ module Manuring
       if previous_sets && previous_crop_age && previous_crop_destruction_period && current_crop_implantation_period
         v = false
         items = Manuring::Abaci::NmpPoitouCharentesAbacusSevenRow.select do |item|
-          previous_sets.include?(item.previous_crop.to_s) && 
+          previous_sets.include?(item.previous_crop.to_s) &&
           previous_usage <= item.usage &&
-          (item.previous_crop_minimum_age.to_i <= previous_crop_age.to_i && 
-          previous_crop_age.to_i < item.previous_crop_maximum_age.to_i) && 
+          (item.previous_crop_minimum_age.to_i <= previous_crop_age.to_i &&
+          previous_crop_age.to_i < item.previous_crop_maximum_age.to_i) &&
           (item.previous_crop_destruction_period_start.to_i <= previous_crop_destruction_period.to_i &&
            previous_crop_destruction_period.to_i < item.previous_crop_destruction_period_stop.to_i) &&
             current_crop_implantation_period.to_i >= item.current_crop_implantation_period_start.to_i
         end
-        
+
         item_sorted = {}
         for item in items
           varieties = Nomen::CropSet[item.previous_crop].varieties
@@ -386,20 +386,20 @@ module Manuring
           end
           item_sorted[n.compact.sum] = item
         end
-        
+
         variety_filtered_items = item_sorted.sort_by{|n, item| n}
-        
+
         puts previous_sets.inspect.blue
         puts previous_cultivation.inspect.white
         puts variety_filtered_items.inspect.yellow
-        
+
         if variety_filtered_items.any?
           quantity = variety_filtered_items[0][1].quantity.in_kilogram_per_hectare
           puts quantity.inspect.red
         elsif items.any?
           quantity = items.first.quantity.in_kilogram_per_hectare if items.any?
         end
-        
+
       end
       quantity
     end

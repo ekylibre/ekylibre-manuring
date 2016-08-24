@@ -18,8 +18,8 @@
       widget.element.trigger "intervention_menu:loaded"
 
     insert: (feature) ->
-      
-      
+
+
     update: (geojson) ->
 
     apply: (internal_id,fun) ->
@@ -52,6 +52,6 @@
   $(document).ready ->
     $("input[data-intervention-menu]").each ->
       $(this).manureinterventionmenu()
-      
+
 
 ) jQuery
