@@ -12,9 +12,12 @@ module Manuring
         @available_water_capacity = (parameters["available_water_capacity"] || 0).to_d
         @average_precipitation_between_october_and_march = (parameters["average_precipitation_between_october_and_march"] || 350).to_d
         @irrigated = manure_management_plan_zone.irrigated
+        @usage = manure_management_plan_zone.usage
+        @usage_nomen = Nomen::ProductionUsage[manure_management_plan_zone.usage]
         @campaign = manure_management_plan_zone.campaign
         @zone = manure_management_plan_zone
         @activity_production = manure_management_plan_zone.activity_production
+        @cultivable_zone = manure_management_plan_zone.activity_production.cultivable_zone
         @cultivation = manure_management_plan_zone.activity_production.current_cultivation
         @opened_at = manure_management_plan_zone.opened_at
         @mineral_nitrogen_at_opening = (parameters["mineral_nitrogen_in_soil_at_opening"]|| 0.0).to_d

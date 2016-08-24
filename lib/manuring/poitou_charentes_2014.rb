@@ -15,10 +15,10 @@ module Manuring
       expected_yield = estimate_expected_yield if expected_yield.nil?
       expected_yield ||= 0
 
-      if @variety_nomen
+      if @variety_nomen and @usage
         items = Manuring::Abaci::NmpPoitouCharentesAbacusThree2014Row.select do |i|
           @variety_nomen <= i.cultivation_variety &&
-            (i.usage.blank? || i.usage.to_sym == @usage) &&
+            (i.usage.blank? || @usage_nomen <= i.usage ) &&
             (i.minimum_yield_aim.blank? || i.minimum_yield_aim <= expected_yield) &&
             (i.maximum_yield_aim.blank? || expected_yield <= i.maximum_yield_aim) &&
             (i.irrigated.blank? || (@irrigated && i.irrigated) || (!@irrigated && !i.irrigated))
@@ -39,7 +39,7 @@ module Manuring
       # if @variety and items = Manuring::Abaci::NmpPoitouCharentesAbacusThreeRow.best_match(:cultivation_variety, @variety.name) and items.any?
       #   b = items.first.coefficient
       # end
-      expected_yield.in_kilogram_per_hectare * b / 100.0.to_d
+      return (expected_yield.in_kilogram_per_hectare * b / 100.0.to_d).round(2)
     end
 
     # Estimate "S" soil_supply
@@ -67,7 +67,7 @@ module Manuring
         end
 
       end
-      return s
+      return s.round(2)
 
     end
 
@@ -76,37 +76,37 @@ module Manuring
       values = {}
 
       # Pi
-      values[:absorbed_nitrogen_at_opening] = estimate_absorbed_nitrogen_at_opening
+      values[:absorbed_nitrogen_at_opening] = estimate_absorbed_nitrogen_at_opening.round(2)
 
       # Ri
-      values[:mineral_nitrogen_at_opening]  = estimate_mineral_nitrogen_at_opening
+      values[:mineral_nitrogen_at_opening]  = estimate_mineral_nitrogen_at_opening.round(2)
 
       # Mh
-      values[:humus_mineralization]           = estimate_humus_mineralization
+      values[:humus_mineralization]           = estimate_humus_mineralization.round(2)
 
       # Mhp
-      values[:meadow_humus_mineralization]    = estimate_meadow_humus_mineralization
+      values[:meadow_humus_mineralization]    = estimate_meadow_humus_mineralization.round(2)
 
       # Mr
-      values[:previous_cultivation_residue_mineralization] = estimate_previous_cultivation_residue_mineralization
+      values[:previous_cultivation_residue_mineralization] = estimate_previous_cultivation_residue_mineralization.round(2)
 
       # Mrci
-      values[:intermediate_cultivation_residue_mineralization] = estimate_intermediate_cultivation_residue_mineralization
+      values[:intermediate_cultivation_residue_mineralization] = estimate_intermediate_cultivation_residue_mineralization.round(2)
 
       # Nirr
-      values[:irrigation_water_nitrogen] = estimate_irrigation_water_nitrogen
+      values[:irrigation_water_nitrogen] = estimate_irrigation_water_nitrogen.round(2)
 
       # Xa
-      values[:organic_fertilizer_mineral_fraction] = estimate_organic_fertilizer_mineral_fraction
+      values[:organic_fertilizer_mineral_fraction] = estimate_organic_fertilizer_mineral_fraction.round(2)
 
       # Rf
-      values[:nitrogen_at_closing] = estimate_nitrogen_at_closing
+      values[:nitrogen_at_closing] = estimate_nitrogen_at_closing.round(2)
 
       # Po
-      values[:soil_production] = estimate_soil_production
+      values[:soil_production] = estimate_soil_production.round(2)
 
       # Xmax
-      values[:maximum_nitrogen_input] = estimate_maximum_nitrogen_input
+      values[:maximum_nitrogen_input] = estimate_maximum_nitrogen_input.round(2)
 
       return values
     end
@@ -212,7 +212,7 @@ module Manuring
       if @cultivation.blank? && @variety_nomen && (@variety_nomen <= :zea || @variety_nomen <= :sorghum || @variety_nomen <= :helianthus || @variety_nomen <= :linum || @variety_nomen <= :cannabis || @variety_nomen <= :nicotiana)
         quantity = 0.in_kilogram_per_hectare
       elsif @cultivation
-        if count = @cultivation.leaf_count(at: @opened_at) and activity.nature.to_sym == :cereal_crops
+        if count = @cultivation.tiller_count(at: @opened_at)
           items = Manuring::Abaci::NmpPoitouCharentesAbacusFour2014Row.select do |item|
             item.minimum_leaf_count <= count && count <= item.maximum_leaf_count
           end
@@ -305,25 +305,36 @@ module Manuring
       quantity = 0.in_kilogram_per_hectare
       # get the previous cultivation variety on the current support storage
       previous_variety = nil
+      
       for campaign in @campaign.previous.reorder(harvest_year: :desc)
         for activity_production in campaign.activity_productions.where(cultivable_zone_id: @activity_production.cultivable_zone.id)
+          # get previous cultivation
+          if activity_production.current_cultivation
+            previous_cultivation = activity_production.current_cultivation
+            previous_variety = Nomen::Variety.find(activity_production.current_cultivation.variety)
+            previous_usage = Nomen::ProductionUsage.find(activity_production.usage)
+            break
           # if an implantation intervention exist, get the plant output
-          if previous_implantation_intervention = activity_production.interventions.of_nature(:implantation).where(state: :done).order(:started_at).last
+          elsif previous_implantation_intervention = activity_production.interventions.of_nature(:implantation).where(state: :done).order(:started_at).last
             if previous_cultivation = previous_implantation_intervention.casts.of_generic_role(:output).first.actor
               previous_variety = Nomen::Variety.find(previous_cultivation.variety)
               previous_cultivation_dead_at = previous_cultivation.dead_at
+              previous_usage = Nomen::ProductionUsage.find(activity_production.usage)
               break
             end
             break if previous_variety
           # elsif get the production_variant
           elsif activity_production.production_variety
             previous_variety = Nomen::Variety.find(activity_production.production_variety)
+            previous_usage = Nomen::ProductionUsage.find(activity_production.usage)
             break
           end
           break if previous_variety
         end
         break if previous_variety
       end
+
+
 
       if previous_variety
         # find corresponding crop_sets to previous_variety
@@ -355,10 +366,40 @@ module Manuring
       end
       # find items in abacus 7
       if previous_sets && previous_crop_age && previous_crop_destruction_period && current_crop_implantation_period
+        v = false
         items = Manuring::Abaci::NmpPoitouCharentesAbacusSevenRow.select do |item|
-          previous_sets.include?(item.previous_crop.to_s) && (item.previous_crop_minimum_age.to_i <= previous_crop_age.to_i && previous_crop_age.to_i < item.previous_crop_maximum_age.to_i) && (item.previous_crop_destruction_period_start.to_i <= previous_crop_destruction_period.to_i && previous_crop_destruction_period.to_i < item.previous_crop_destruction_period_stop.to_i) && current_crop_implantation_period.to_i >= item.current_crop_implantation_period_start.to_i
+          previous_sets.include?(item.previous_crop.to_s) && 
+          previous_usage <= item.usage &&
+          (item.previous_crop_minimum_age.to_i <= previous_crop_age.to_i && 
+          previous_crop_age.to_i < item.previous_crop_maximum_age.to_i) && 
+          (item.previous_crop_destruction_period_start.to_i <= previous_crop_destruction_period.to_i &&
+           previous_crop_destruction_period.to_i < item.previous_crop_destruction_period_stop.to_i) &&
+            current_crop_implantation_period.to_i >= item.current_crop_implantation_period_start.to_i
         end
-        quantity = items.first.quantity.in_kilogram_per_hectare if items.any?
+        
+        item_sorted = {}
+        for item in items
+          varieties = Nomen::CropSet[item.previous_crop].varieties
+          n = []
+          for variety in varieties
+            n << previous_variety.degree_of_kinship_with(variety)
+          end
+          item_sorted[n.compact.sum] = item
+        end
+        
+        variety_filtered_items = item_sorted.sort_by{|n, item| n}
+        
+        puts previous_sets.inspect.blue
+        puts previous_cultivation.inspect.white
+        puts variety_filtered_items.inspect.yellow
+        
+        if variety_filtered_items.any?
+          quantity = variety_filtered_items[0][1].quantity.in_kilogram_per_hectare
+          puts quantity.inspect.red
+        elsif items.any?
+          quantity = items.first.quantity.in_kilogram_per_hectare if items.any?
+        end
+        
       end
       quantity
     end

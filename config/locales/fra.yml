@@ -7,3 +7,9 @@ fra:
       result:
         needs: "Besoins"
         input: "Apport"
+        yields: "Rendement"
+        needs: "Besoins (Pf)"
+        soil_supplies: "Fourniture du sol"
+        irrigation: "Apport azoté par l'irrigation"
+        organic_input: "Apport azoté d'origine organique"
+        input: "Apport azoté global"
