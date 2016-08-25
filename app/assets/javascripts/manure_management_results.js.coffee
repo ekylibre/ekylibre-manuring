@@ -34,7 +34,6 @@
         $el.mapeditoraccordion 'insert', feature
 
     $el.on 'mapeditoraccordion:feature_select', (e, feature) ->
-      $el.manureinterventionmenu 'insert', feature
 
     $el.on 'mapeditoraccordion:feature_update', (e, feature, attribute, type) ->
 

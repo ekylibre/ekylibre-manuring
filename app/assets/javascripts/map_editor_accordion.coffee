@@ -24,11 +24,18 @@
         $render = @template feature.properties
         @$accordion.append $render
         $icon = $render.find('i')
-        $icon.addClass('manure_selected_icon')
+        $icon.replaceWith("<input id=#{feature.properties.id} class='manure_selected_icon' type='checkbox'>")
+  
+        $('input.manure_selected_icon:checkbox').on 'change', () ->
+          if $('input.manure_selected_icon:checkbox:checked').length <= 0
+            $('#intervention_submit_button').prop( "disabled", true )
+          else
+            $('#intervention_submit_button').prop( "disabled", false )
 
-        $icon.on 'click', (e) =>
+        $(".manure_selected_icon").on 'click', (e) =>
           e.stopPropagation()
           $(@element).trigger('mapeditoraccordion:feature_select',feature)
+
         $(@element).trigger('mapeditoraccordion:feature_inserted', feature)
 
     update: (geojson) ->

@@ -1,57 +1,21 @@
 (($) ->
   "use strict"
 
-  $.widget "ui.manureinterventionmenu",
-    options:
-      box:
-        height: null
-        width: null
-      customClass: ''
-
-    _create: ->
-      $.extend(true, @options, @element.data("intervention-menu"))
-
-      @$intervention_menu = $('.intervention_menu')
-      widget = this
-      @_resize()
-
-      widget.element.trigger "intervention_menu:loaded"
-
-    insert: (feature) ->
-
-
-    update: (geojson) ->
-
-    apply: (internal_id,fun) ->
-      $element = @$intervention_menu.find("div[data-internal-id='#{internal_id}']")
-      fun($element)
-
-    remove: (element) ->
-      $el = $(element)
-      if $el
-        $el.addClass 'removed'
-        setTimeout(() ->
-          $el.removeClass 'removed'
-          $el.fadeIn()
-          $el.remove()
-        ,1000)
-
-    _destroy: ->
-      @$intervention_menu.remove()
-
-    _resize: ->
-      if @options.box?
-        if @options.box.height?
-          @$intervention_menu.height @options.box.height
-        if @options.box.width?
-          @$intervention_menu.width @options.box.width
-        @_trigger "resize"
-
-
-
   $(document).ready ->
-    $("input[data-intervention-menu]").each ->
-      $(this).manureinterventionmenu()
+    $el = $('input.manuring_step_form[data-map-editor]')
+
+    $('#intervention_submit_button').prop( "disabled", true )
+    
+    $('#intervention_submit_button').on 'click', (e) ->
+      e.preventDefault();
+      manure_zone_ids = []
+      $('input.manure_selected_icon:checkbox:checked').each (index, elem) =>
+        manure_zone_ids.push($(elem).attr('id'))
+
+      console.log(manure_zone_ids)
+      $('#manure_zone_ids_input').val(manure_zone_ids)
+      console.log("zone_id " + $('#manure_zone_ids_input').val())
+      $("#new_manure_management_plan_intervention").submit();
 
 
 ) jQuery
