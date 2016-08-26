@@ -16,6 +16,8 @@
       @_resize()
       widget.element.trigger "mapeditoraccordion:loaded"
 
+
+
     template: (properties) ->
       return $($.parseHTML(properties["field_set_template"]))
 
@@ -25,7 +27,7 @@
         @$accordion.append $render
         $icon = $render.find('i')
         $icon.replaceWith("<input id=#{feature.properties.id} class='manure_selected_icon' type='checkbox'>")
-  
+
         $('input.manure_selected_icon:checkbox').on 'change', () ->
           if $('input.manure_selected_icon:checkbox:checked').length <= 0
             $('#intervention_submit_button').prop( "disabled", true )

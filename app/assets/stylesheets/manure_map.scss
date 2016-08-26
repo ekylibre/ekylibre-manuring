@@ -43,6 +43,7 @@
           }
         }
         .fieldset-fields {
+          overflow: auto;
           .control-group {
             .mrsg {
               width: 100%;
@@ -104,6 +105,5 @@
       }
     }
   }
-
 }
 
